@@ -33,11 +33,11 @@ storage:
 
 # 分页
 paging:
-  url_query_order: "order"
-  url_query_sort: "sort"
+  order: "order"
+  sort: "sort"
   perpage: 10
-  url_query_page: "page"
-  url_query_per_page: "per_page"
+  query_page: "page"
+  query_per_page: "per_page"
 
 # 缓存
 redis:
@@ -47,6 +47,9 @@ redis:
   password: ""
   db: 1
   cache_db: 0
+  dial_timeout: 30
+  read_timeout: 30
+  write_timeout: 30
 
 # 数据库
 db:
@@ -58,6 +61,9 @@ db:
     host: "127.0.0.1"
     port: "3306"
     charset: "utf8mb4"
+    max_idle_conn: 100
+    max_open_conn: 100
+    max_life_time: 300
   sqlite:
     name: "sss"
 
@@ -76,13 +82,19 @@ log:
   max_age: "30"
   compress: false # 是否压缩，压缩日志不方便查看，我们设置为 false（压缩可节省空间）
   type: "daily"
-  level: "debug"
+  level: "debug",
+  encoding: "json"
+  to_console: true # 是否终端输出
+  to_file: true # 是否写入文件
 
 # JWT
 jwt:
-  expire_time: 120 # 过期时间，单位是分钟，一般不超过两个小时
-  max_refresh_time: 86400 # 允许刷新时间，单位分钟，86400 为两个月，从 Token 的签名时间算起
-  debug_expire_time: 86400  # debug 模式下的过期时间，方便本地开发调试
+  expires: 120 # 过期时间，单位是分钟，一般不超过两个小时
+  max_refresh: 86400 # 允许刷新时间，单位分钟，86400 为两个月，从 Token 的签名时间算起
+  name: ""  # 一般使用 app.name
+  key: ""
+  timezone: "asia/shanghai"
+  type: 1 # 可以给 前台,后台 分开设值
 
 captcha:
   height: 80 # 验证码图片高度
@@ -91,8 +103,6 @@ captcha:
   maxskew: 0.7 # 数字的最大倾斜角度
   dotcount: 80 # 图片背景里的混淆点数量
   expire_time: 15 # 过期时间，单位是分钟
-  debug_expire_time: 10086 # debug 模式下的过期时间，方便本地开发调试
-  testing_key: "captcha_skip_test" # 非 production 环境，使用此 key 可跳过验证，方便测试
 
 es:
   hosts:

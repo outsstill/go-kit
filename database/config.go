@@ -1,7 +1,5 @@
 package database
 
-import "time"
-
 type Config struct {
 	Driver string `mapstructure:"driver"`
 
@@ -11,9 +9,9 @@ type Config struct {
 	Password string `mapstructure:"password"`
 	Database string `mapstructure:"database"`
 
-	MaxIdleConn int           `mapstructure:"max_idle_conn"`
-	MaxOpenConn int           `mapstructure:"max_open_conn"`
-	MaxLifeTime time.Duration `mapstructure:"max_life_time"`
+	MaxIdleConn int   `mapstructure:"max_idle_conn"`
+	MaxOpenConn int   `mapstructure:"max_open_conn"`
+	MaxLifeTime int64 `mapstructure:"max_life_time"`
 
 	DSN string `mapstructure:"dsn"`
 }

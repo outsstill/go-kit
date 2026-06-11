@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"time"
 
 	"github.com/outsstill/go-kit/database"
 
@@ -48,7 +49,7 @@ func New(
 
 	sqlDB.SetMaxIdleConns(cfg.MaxIdleConn)
 	sqlDB.SetMaxOpenConns(cfg.MaxOpenConn)
-	sqlDB.SetConnMaxLifetime(cfg.MaxLifeTime)
+	sqlDB.SetConnMaxLifetime(time.Duration(cfg.MaxLifeTime))
 
 	return &Client{
 		name: name,
