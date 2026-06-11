@@ -1,0 +1,151 @@
+app:
+  name: "go-demo"
+  key: "abcd" # 一些加密需要使用 更换会影响现有业务，谨慎
+  url: ""
+  http_port: "8789"
+  file_url: "https://space-one.oss-cn-shanghai.aliyuncs.com"
+  env: "production"
+  version: "1.0.0"
+  debug: true
+
+# 云存储
+storage:
+  driver: "local"
+  size_limit: 10485760 # 10M
+  ext: # 允许上传的文件类型
+    - "jpg"
+    - "png"
+    - "jpeg"
+  local:
+    path: "storage/files"
+    domain: "http://localhost:8789"
+    static: "static" #访问的替换字段避免暴露真实路径
+  oss:
+    key_id: ""
+    key_secret: ""
+    region: "cn-shanghai"
+    bucket: "space-one"
+    domain: "https://space-one.oss-cn-shanghai.aliyuncs.com"
+  qiniu:
+    id: ""
+    key: ""
+    domain: ""
+
+# 分页
+paging:
+  url_query_order: "order"
+  url_query_sort: "sort"
+  perpage: 10
+  url_query_page: "page"
+  url_query_per_page: "per_page"
+
+# 缓存
+redis:
+  host: "127.0.0.1"
+  port: "6379"
+  username: ""
+  password: ""
+  db: 1
+  cache_db: 0
+
+# 数据库
+db:
+  default: "mysql"
+  mysql:
+    database: ""
+    username: "root"
+    password: ""
+    host: "127.0.0.1"
+    port: "3306"
+    charset: "utf8mb4"
+  sqlite:
+    name: "sss"
+
+# 日志级别，必须是以下这些选项：
+# "debug" —— 信息量大，一般调试时打开。系统模块详细运行的日志，例如 HTTP 请求、数据库请求、发送邮件、发送短信
+# "info" —— 业务级别的运行日志，如用户登录、用户退出、订单撤销。
+# "warn" —— 感兴趣、需要引起关注的信息。 例如，调试时候打印调试信息（命令行输出会有高亮）。
+# "error" —— 记录错误信息。Panic 或者 Error。如数据库连接错误、HTTP 端口被占用等。一般生产环境使用的等级。
+# 以上级别从低到高，level 值设置的级别越高，记录到日志的信息就越少
+# 开发时推荐使用 "debug" 或者 "info" ，生产环境下使用 "error"
+# 日志
+log:
+  filename: "storage/logs/logs.log"
+  max_size: "64"
+  max_backup: "60" # 最多保存日志文件数，0 为不限，MaxAge 到了还是会删
+  max_age: "30"
+  compress: false # 是否压缩，压缩日志不方便查看，我们设置为 false（压缩可节省空间）
+  type: "daily"
+  level: "debug"
+
+# JWT
+jwt:
+  expire_time: 120 # 过期时间，单位是分钟，一般不超过两个小时
+  max_refresh_time: 86400 # 允许刷新时间，单位分钟，86400 为两个月，从 Token 的签名时间算起
+  debug_expire_time: 86400  # debug 模式下的过期时间，方便本地开发调试
+
+captcha:
+  height: 80 # 验证码图片高度
+  width: 120 # 验证码图片宽度
+  length: 6 # 验证码的长度
+  maxskew: 0.7 # 数字的最大倾斜角度
+  dotcount: 80 # 图片背景里的混淆点数量
+  expire_time: 15 # 过期时间，单位是分钟
+  debug_expire_time: 10086 # debug 模式下的过期时间，方便本地开发调试
+  testing_key: "captcha_skip_test" # 非 production 环境，使用此 key 可跳过验证，方便测试
+
+es:
+  hosts:
+    - http://localhost:9200
+    - http://localhost2:9200
+  username: ""
+  password: ""
+
+# 微信相关
+wechat:
+  # 微信支付配置文档： https://powerwechat.artisan-cloud.com/zh/payment/index.html#userconfig%E5%8F%82%E6%95%B0%E8%AF%B4%E6%98%8E%EF%BC%9A
+  payment:
+    appid: xxxxx # 公众号appid、小程序appid、企业微信corpid等
+    mchid: 100000 # ArtisanCloud商户号
+    certpath: certs/apiclient_cert.pem # 证书路径
+    keypath: certs/apiclient_key.pem # 证书私钥路径
+    serialno: 55D06F99FF64CF1759FDE5B77A0BEC8B67A78C2E
+    key: xxxxx
+    mchapiv3key: xxxxx
+    notifyurl: https://www.artisancloud.cn
+    redisaddr: localhost:6379
+
+  # 小程序配置文档： https://powerwechat.artisan-cloud.com/zh/mini-program/index.html
+  miniprogram:
+    appid: xxxxx
+    secret: xxxxx
+    redisaddr: localhost:6379
+
+  # 企业微信配置文档： https://powerwechat.artisan-cloud.com/zh/wecom/index.html
+  wecom:
+    corpid: ww454dfb9d6f6d432a
+
+  # ----- powerwechat-docs-demo start ------
+    agent_id: 1000000
+    secret: xxxxx
+    messagetoken: xxxxx
+    messageaeskey: xxxxx
+    messagecallback: https://www.artisan-cloud.com/message/callback
+    oauthcallback: https://www.artisan-cloud.com/oauth/callback
+  # ----- powerwechat-docs-demo end ------
+
+  # 联系人配置
+    contactsecret: xxxxx
+    contacttoken: xxxxx
+    contactaeskey: xxxxx
+    contactcallback: https://www.artisan-cloud.com/api/wx/customer
+
+    redisaddr: localhost:6379
+
+  # 公众号配置文档： https://powerwechat.artisan-cloud.com/zh/official-account/index.html
+  offiaccount:
+    appid: "wx6e57c38965307a4b"
+    appsecret: "0c6815cd7fbdeb8bd9c910eb37913046"
+    token: "9527"
+    redisaddr: 127.0.0.1:6379
+
