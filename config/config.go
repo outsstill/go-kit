@@ -12,6 +12,7 @@ type Config struct {
 	Logger  LoggerConfig  `mapstructure:"logger"`
 	JWT     JWTConfig     `mapstructure:"jwt"`
 	Captcha CaptchaConfig `mapstructure:"captcha"`
+	Storage StorageConfig `mapstructure:"storage"`
 }
 
 func LoadConfig(path string) (*Config, error) {
