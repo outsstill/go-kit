@@ -1,8 +1,6 @@
 package config
 
 import (
-	"time"
-
 	"github.com/outsstill/go-kit/database"
 )
 
