@@ -37,7 +37,7 @@ type redisStore struct {
 	cfg Config
 }
 
-func NewCaptcha(rdb *redis.Client, ctx context.Context, cfg Config) (*Captcha, error) {
+func NewCaptcha(rdb *redis.Client, cfg Config, ctx context.Context) (*Captcha, error) {
 
 	if rdb == nil {
 		return nil, errors.New("redis client is nil")

@@ -19,9 +19,9 @@ type GormLogger struct {
 }
 
 // NewGormLogger 初始化
-func NewGormLogger(z *zap.Logger) *GormLogger {
+func NewGormLogger() *GormLogger {
 	return &GormLogger{
-		ZapLogger:     z,
+		ZapLogger:     Log,
 		SlowThreshold: 200 * time.Millisecond,
 		LogLevel:      gormlogger.Info,
 	}

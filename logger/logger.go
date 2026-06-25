@@ -28,8 +28,19 @@ type Logger struct {
 	z *zap.Logger
 }
 
+var LogDefault *Logger
+
+func Init(cfg Config) error {
+
+	log, err := New(cfg)
+
+	LogDefault = &Logger{z: log}
+
+	return err
+}
+
 // New 初始化 logger
-func New(cfg Config) *Logger {
+func New(cfg Config) (*zap.Logger, error) {
 
 	writeSyncer := getWriteSyncer(cfg)
 
@@ -50,39 +61,39 @@ func New(cfg Config) *Logger {
 		zap.AddStacktrace(zapcore.ErrorLevel),
 	)
 
-	return &Logger{z: z}
+	return z, nil
 }
 
-func (l *Logger) Zap() *zap.Logger {
-	return l.z
+func Zap() *zap.Logger {
+	return LogDefault.z
 }
 
-func (l *Logger) Sync() error {
-	return l.z.Sync()
+func Sync() error {
+	return LogDefault.z.Sync()
 }
 
 // =========================
 // core API（统一风格）
 // =========================
 
-func (l *Logger) Debug(msg string, fields ...zap.Field) {
-	l.z.Debug(msg, fields...)
+func Debug(msg string, fields ...zap.Field) {
+	LogDefault.z.Debug(msg, fields...)
 }
 
-func (l *Logger) Info(msg string, fields ...zap.Field) {
-	l.z.Info(msg, fields...)
+func Info(msg string, fields ...zap.Field) {
+	LogDefault.z.Info(msg, fields...)
 }
 
-func (l *Logger) Warn(msg string, fields ...zap.Field) {
-	l.z.Warn(msg, fields...)
+func Warn(msg string, fields ...zap.Field) {
+	LogDefault.z.Warn(msg, fields...)
 }
 
-func (l *Logger) Error(msg string, fields ...zap.Field) {
-	l.z.Error(msg, fields...)
+func Error(msg string, fields ...zap.Field) {
+	LogDefault.z.Error(msg, fields...)
 }
 
-func (l *Logger) Fatal(msg string, fields ...zap.Field) {
-	l.z.Fatal(msg, fields...)
+func Fatal(msg string, fields ...zap.Field) {
+	LogDefault.z.Fatal(msg, fields...)
 }
 
 // =========================
@@ -90,21 +101,21 @@ func (l *Logger) Fatal(msg string, fields ...zap.Field) {
 // =========================
 
 // With 增加上下文字段（非常重要）
-func (l *Logger) Named(name string) *Logger {
+func Named(name string) *Logger {
 	return &Logger{
-		z: l.z.Named(name),
+		z: LogDefault.z.Named(name),
 	}
 }
 
-func (l *Logger) With(fields ...zap.Field) *Logger {
+func With(fields ...zap.Field) *Logger {
 	return &Logger{
-		z: l.z.With(fields...),
+		z: LogDefault.z.With(fields...),
 	}
 }
 
 // Dump 调试对象
-func (l *Logger) Dump(v any) {
-	l.z.Warn("dump", zap.Any("data", v))
+func Dump(v any) {
+	LogDefault.z.Warn("dump", zap.Any("data", v))
 }
 
 // =========================

@@ -25,7 +25,7 @@ type RedisClient struct {
 	Context context.Context
 }
 
-func New(cfg Config, ctx context.Context) *RedisClient {
+func New(cfg Config, ctx context.Context) (*RedisClient, error) {
 
 	rds := &RedisClient{}
 	if ctx == nil {
@@ -46,7 +46,7 @@ func New(cfg Config, ctx context.Context) *RedisClient {
 		WriteTimeout: cfg.WriteTimeout,
 	})
 
-	return rds
+	return rds, nil
 }
 
 func (r *RedisClient) Raw() *redis.Client {
