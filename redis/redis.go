@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/outsstill/go-kit/logger"
 	"github.com/redis/go-redis/v9"
 )
 
@@ -55,6 +56,11 @@ func newRedis(cfg Config, ctx context.Context, db int) (*RedisClient, error) {
 			ReadTimeout:  cfg.ReadTimeout,
 			WriteTimeout: cfg.WriteTimeout,
 		}),
+	}
+
+	if err := rds.Client.Ping(rds.Context).Err(); err != nil {
+		logger.ErrorString("redis", "newRedis", err.Error())
+		return nil, err
 	}
 
 	return rds, nil
