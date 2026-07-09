@@ -75,6 +75,11 @@ func Sync() error {
 // =========================
 // core API（统一风格）
 // =========================
+func LogIf(err error) {
+	if err != nil {
+		LogDefault.z.Error("Error Occurred:", zap.Error(err))
+	}
+}
 
 func Debug(msg string, fields ...zap.Field) {
 	LogDefault.z.Debug(msg, fields...)
