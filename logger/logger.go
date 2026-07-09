@@ -2,6 +2,7 @@
 package logger
 
 import (
+	"encoding/json"
 	"os"
 	"strings"
 	"time"
@@ -121,6 +122,71 @@ func With(fields ...zap.Field) *Logger {
 // Dump 调试对象
 func Dump(v any) {
 	LogDefault.z.Warn("dump", zap.Any("data", v))
+}
+
+// LogWarnIf 当 err != nil 时记录 warning 等级的日志
+func LogWarnIf(err error) {
+	if err != nil {
+		LogDefault.z.Warn("Error Occurred:", zap.Error(err))
+	}
+}
+
+// LogInfoIf 当 err != nil 时记录 info 等级的日志
+func LogInfoIf(err error) {
+	if err != nil {
+		LogDefault.z.Info("Error Occurred:", zap.Error(err))
+	}
+}
+
+func DebugString(moduleName, name, msg string) {
+	LogDefault.z.Debug(moduleName, zap.String(name, msg))
+}
+
+func InfoString(moduleName, name, msg string) {
+	LogDefault.z.Info(moduleName, zap.String(name, msg))
+}
+
+func WarnString(moduleName, name, msg string) {
+	LogDefault.z.Warn(moduleName, zap.String(name, msg))
+}
+
+func ErrorString(moduleName, name, msg string) {
+	LogDefault.z.Error(moduleName, zap.String(name, msg))
+}
+
+func FatalString(moduleName, name, msg string) {
+	LogDefault.z.Fatal(moduleName, zap.String(name, msg))
+}
+
+// DebugJSON 记录对象类型的 debug 日志，使用 json.Marshal 进行编码。调用示例：
+//
+//	logger.DebugJSON("Auth", "读取登录用户", auth.CurrentUser())
+func DebugJSON(moduleName, name string, value interface{}) {
+	LogDefault.z.Debug(moduleName, zap.String(name, jsonString(value)))
+}
+
+func InfoJSON(moduleName, name string, value interface{}) {
+	LogDefault.z.Info(moduleName, zap.String(name, jsonString(value)))
+}
+
+func WarnJSON(moduleName, name string, value interface{}) {
+	LogDefault.z.Warn(moduleName, zap.String(name, jsonString(value)))
+}
+
+func ErrorJSON(moduleName, name string, value interface{}) {
+	LogDefault.z.Error(moduleName, zap.String(name, jsonString(value)))
+}
+
+func FatalJSON(moduleName, name string, value interface{}) {
+	LogDefault.z.Fatal(moduleName, zap.String(name, jsonString(value)))
+}
+
+func jsonString(value interface{}) string {
+	b, err := json.Marshal(value)
+	if err != nil {
+		LogDefault.z.Error("Logger", zap.String("JSON marshal error", err.Error()))
+	}
+	return string(b)
 }
 
 // =========================
