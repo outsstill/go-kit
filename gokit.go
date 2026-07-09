@@ -28,63 +28,122 @@ func Bootstrap(configPath string) (*App, error) {
 	app := &App{}
 
 	// config
+	if err := app.LoadConfig(configPath); err != nil {
+		return nil, err
+	}
+
+	// log
+	if err := app.InitLogger(); err != nil {
+		return nil, err
+	}
+
+	// db
+	if err := app.InitDB(); err != nil {
+		return nil, err
+	}
+
+	// redis
+	if err := app.InitRedis(); err != nil {
+		return nil, err
+	}
+
+	// cache
+	if err := app.InitCache(); err != nil {
+		return nil, err
+	}
+
+	// 验证码
+	if err := app.InitCaptcha(); err != nil {
+		return nil, err
+	}
+
+	// storage
+	if err := app.InitStorage(); err != nil {
+		return nil, err
+	}
+
+	return app, nil
+}
+
+func New(configPath string) (*App, error) {
+	app := &App{}
+
+	// config
+	if err := app.LoadConfig(configPath); err != nil {
+		return nil, err
+	}
+
+	return app, nil
+}
+
+func (a *App) LoadConfig(configPath string) error {
 	configObj, err := config.LoadConfig(configPath)
 
 	if err != nil {
-		return nil, err
+		return err
 	}
-	app.Config = configObj
+	a.Config = configObj
+	return nil
+}
 
-	// log
-	err = logger.Init(configObj.Logger.ToLoggerConfig())
+func (a *App) InitLogger() error {
+	err := logger.Init(a.Config.Logger.ToLoggerConfig())
+	if err != nil {
+		return err
+	}
+	a.Logger = logger.LogDefault
+	return nil
+}
+
+func (a *App) InitDB() error {
+
+	db, err := mysql.New("default", a.Config.DB.ToMySQL())
 
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	app.Logger = logger.LogDefault
+	a.DB = db
+	return nil
+}
 
-	// db
-	db, err := mysql.New("default", configObj.DB.ToMySQL())
-
+func (a *App) InitRedis() error {
+	redisClient, err := redis.New(a.Config.Redis.ToRedis(), context.Background())
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	app.DB = db
+	a.Redis = redisClient
+	return nil
+}
 
-	// redis
-	redisClient, err := redis.New(configObj.Redis.ToRedis(), context.Background())
+func (a *App) InitCache() error {
+
+	redisCache, err := redis.NewCache(a.Config.Redis.ToRedis(), context.Background())
 	if err != nil {
-		return nil, err
-	}
-
-	app.Redis = redisClient
-
-	// cache
-	redisCache, err := redis.NewCache(configObj.Redis.ToRedis(), context.Background())
-	if err != nil {
-		return nil, err
+		return err
 	}
 	cacheObj := cache.NewRedisCache(redisCache.Client, nil)
 
-	app.Cache = cacheObj
+	a.Cache = cacheObj
+	return nil
+}
 
-	// 验证码
-	captchaObj, err := captcha.NewCaptcha(app.Redis.Client, configObj.Captcha.ToCaptcha(), nil)
+func (a *App) InitCaptcha() error {
+	captchaObj, err := captcha.NewCaptcha(a.Redis.Client, a.Config.Captcha.ToCaptcha(), nil)
 	if err != nil {
-		return nil, err
+		return err
+	}
+	a.Captcha = captchaObj
+	return nil
+}
+
+func (a *App) InitStorage() error {
+	storageManager, err := storage.New(a.Config.Storage.ToStorage())
+	if err != nil {
+		return err
 	}
 
-	app.Captcha = captchaObj
-
-	// storage
-	storageManager, err := storage.New(configObj.Storage.ToStorage())
-	if err != nil {
-		return nil, err
-	}
-
-	app.Storage = storageManager.Driver()
-
-	return app, nil
+	a.Storage = storageManager.Driver()
+	return nil
 }
