@@ -62,7 +62,11 @@ func Bootstrap(configPath string) (*App, error) {
 	app.Redis = redisClient
 
 	// cache
-	cacheObj := cache.NewRedisCache(app.Redis.Client, nil)
+	redisCache, err := redis.NewCache(configObj.Redis.ToRedis(), context.Background())
+	if err != nil {
+		return nil, err
+	}
+	cacheObj := cache.NewRedisCache(redisCache.Client, nil)
 
 	app.Cache = cacheObj
 

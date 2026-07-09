@@ -161,7 +161,7 @@ func getWriteSyncer(cfg Config) zapcore.WriteSyncer {
 
 	// daily log
 	if cfg.Type == "daily" {
-		logname := time.Now().Format("2006-01-02.log")
+		logname := time.Now().Format("20060102.log")
 		filename = strings.ReplaceAll(filename, "logs.log", logname)
 	}
 

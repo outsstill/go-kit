@@ -12,6 +12,7 @@ type Config struct {
 	Username     string        `mapstructure:"username"`
 	Password     string        `mapstructure:"password"`
 	DB           int           `mapstructure:"db"`
+	CacheDB      int           `mapstructure:"cache_db"`
 	PoolSize     int           `mapstructure:"pool_size"`
 	MinIdleConns int           `mapstructure:"min_idle_conns"`
 	MaxRetries   int           `mapstructure:"max_retries"`
@@ -26,25 +27,33 @@ type RedisClient struct {
 }
 
 func New(cfg Config, ctx context.Context) (*RedisClient, error) {
+	return newRedis(cfg, ctx, cfg.DB)
+}
 
-	rds := &RedisClient{}
+func NewCache(cfg Config, ctx context.Context) (*RedisClient, error) {
+	return newRedis(cfg, ctx, cfg.CacheDB)
+}
+
+func newRedis(cfg Config, ctx context.Context, db int) (*RedisClient, error) {
 	if ctx == nil {
 		ctx = context.Background()
 	}
-	rds.Context = ctx
 
-	rds.Client = redis.NewClient(&redis.Options{
-		Addr:         cfg.Addr,
-		Username:     cfg.Username,
-		Password:     cfg.Password,
-		DB:           cfg.DB,
-		PoolSize:     cfg.PoolSize,
-		MinIdleConns: cfg.MinIdleConns,
-		MaxRetries:   cfg.MaxRetries,
-		DialTimeout:  cfg.DialTimeout,
-		ReadTimeout:  cfg.ReadTimeout,
-		WriteTimeout: cfg.WriteTimeout,
-	})
+	rds := &RedisClient{
+		Context: ctx,
+		Client: redis.NewClient(&redis.Options{
+			Addr:         cfg.Addr,
+			Username:     cfg.Username,
+			Password:     cfg.Password,
+			DB:           db,
+			PoolSize:     cfg.PoolSize,
+			MinIdleConns: cfg.MinIdleConns,
+			MaxRetries:   cfg.MaxRetries,
+			DialTimeout:  cfg.DialTimeout,
+			ReadTimeout:  cfg.ReadTimeout,
+			WriteTimeout: cfg.WriteTimeout,
+		}),
+	}
 
 	return rds, nil
 }

@@ -11,6 +11,7 @@ type RedisConfig struct {
 	Username     string        `mapstructure:"username"`
 	Password     string        `mapstructure:"password"`
 	DB           int           `mapstructure:"db"`
+	CacheDB      int           `mapstructure:"cache_db"`
 	PoolSize     int           `mapstructure:"pool_size"`
 	MinIdleConns int           `mapstructure:"min_idle_conns"`
 	MaxRetries   int           `mapstructure:"max_retries"`
@@ -25,6 +26,7 @@ func (c *RedisConfig) ToRedis() redis.Config {
 		Username:     c.Username,
 		Password:     c.Password,
 		DB:           c.DB,
+		CacheDB:      c.CacheDB,
 		PoolSize:     c.PoolSize,
 		MinIdleConns: c.MinIdleConns,
 		MaxRetries:   c.MaxRetries,
