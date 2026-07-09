@@ -7,7 +7,8 @@ import (
 )
 
 type RedisConfig struct {
-	Addr         string        `mapstructure:"addr"`
+	Host         string        `mapstructure:"host"`
+	Port         string        `mapstructure:"port"`
 	Username     string        `mapstructure:"username"`
 	Password     string        `mapstructure:"password"`
 	DB           int           `mapstructure:"db"`
@@ -22,7 +23,8 @@ type RedisConfig struct {
 
 func (c *RedisConfig) ToRedis() redis.Config {
 	return redis.Config{
-		Addr:         c.Addr,
+		Host:         c.Host,
+		Port:         c.Port,
 		Username:     c.Username,
 		Password:     c.Password,
 		DB:           c.DB,

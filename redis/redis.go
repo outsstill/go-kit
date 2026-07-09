@@ -2,13 +2,15 @@ package redis
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/redis/go-redis/v9"
 )
 
 type Config struct {
-	Addr         string        `mapstructure:"addr"`
+	Host         string        `mapstructure:"host"`
+	Port         string        `mapstructure:"port"`
 	Username     string        `mapstructure:"username"`
 	Password     string        `mapstructure:"password"`
 	DB           int           `mapstructure:"db"`
@@ -42,7 +44,7 @@ func newRedis(cfg Config, ctx context.Context, db int) (*RedisClient, error) {
 	rds := &RedisClient{
 		Context: ctx,
 		Client: redis.NewClient(&redis.Options{
-			Addr:         cfg.Addr,
+			Addr:         fmt.Sprintf("%v:%v", cfg.Host, cfg.Port),
 			Username:     cfg.Username,
 			Password:     cfg.Password,
 			DB:           db,
