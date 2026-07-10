@@ -14,6 +14,8 @@ type CaptchaConfig struct {
 	Charset         string  `mapstructure:"charset" json:"charset"`
 	Maxskew         float64 `mapstructure:"maxskew" json:"maxskew"`
 	ShowLineOptions int     `mapstructure:"show_line_options" json:"show_line_options"`
+	TestingKey      string  `mapstructure:"testing_key" json:"testing_key"`
+	DebugExpireTime string  `mapstructure:"debug_expire_time" json:"debug_expire_time"`
 }
 
 func (c *CaptchaConfig) ToCaptcha() captcha.Config {
@@ -29,5 +31,7 @@ func (c *CaptchaConfig) ToCaptcha() captcha.Config {
 		Charset:         c.Charset,
 		Maxskew:         c.Maxskew,
 		ShowLineOptions: c.ShowLineOptions,
+		TestingKey:      c.TestingKey,
+		DebugExpireTime: c.DebugExpireTime,
 	}
 }
