@@ -90,7 +90,13 @@ func (jwt *JWT) timenowInTimezone() time.Time {
 }
 
 // IssueToken 生成  Token，在登录成功时调用
-func (jwt *JWT) IssueToken(userID string, userName string) (string, error) {
+func (jwt *JWT) IssueToken(userID string, userName string, types ...int32) (string, error) {
+
+	ty := jwt.cfg.Type
+
+	if len(types) > 0 {
+		ty = types[0]
+	}
 
 	// 1. 构造用户 claims 信息(负荷)
 	expireAt := jwt.expireAtTime()
@@ -100,7 +106,7 @@ func (jwt *JWT) IssueToken(userID string, userName string) (string, error) {
 		userID,
 		userName,
 		expireAt.Unix(),
-		jwt.cfg.Type,
+		ty,
 		jwtpkg.RegisteredClaims{
 			ExpiresAt: jwtpkg.NewNumericDate(expireAt), // 过期时间
 			IssuedAt:  jwtpkg.NewNumericDate(now),      // 签发时间

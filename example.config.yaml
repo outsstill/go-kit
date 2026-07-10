@@ -92,7 +92,7 @@ jwt:
   expires: 120 # 过期时间，单位是分钟，一般不超过两个小时
   max_refresh: 86400 # 允许刷新时间，单位分钟，86400 为两个月，从 Token 的签名时间算起
   name: ""  # 一般使用 app.name
-  key: ""
+  key: "qwer"
   timezone: "asia/shanghai"
   type: 1 # 可以给 前台,后台 分开设值
 
