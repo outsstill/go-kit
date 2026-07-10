@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"github.com/outsstill/go-kit/logger"
 	"time"
 
 	"github.com/outsstill/go-kit/database"
@@ -37,7 +38,9 @@ func New(
 		)
 	}
 
-	gdb, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	gdb, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
+		Logger: logger.NewGormLogger(),
+	})
 	if err != nil {
 		return nil, err
 	}
