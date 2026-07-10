@@ -12,8 +12,9 @@ type StorageConfig struct {
 }
 
 type LocalConfig struct {
-	BasePath string `mapstructure:"base_path"`
-	BaseURL  string `mapstructure:"base_url"`
+	BasePath     string `mapstructure:"base_path"`
+	BaseURL      string `mapstructure:"base_url"`
+	StaticPrefix string `mapstructure:"static_prefix"` //访问的替换字段避免暴露真实路径
 }
 
 type OssConfig struct {
@@ -44,8 +45,9 @@ func (c StorageConfig) ToStorage() storage.Config {
 	return storage.Config{
 		Driver: c.Driver,
 		Local: storage.LocalConfig{
-			BasePath: c.Local.BasePath,
-			BaseURL:  c.Local.BaseURL,
+			BasePath:     c.Local.BasePath,
+			BaseURL:      c.Local.BaseURL,
+			StaticPrefix: c.Local.StaticPrefix,
 		},
 		Oss: storage.OssConfig{
 			Region:     c.Oss.Region,

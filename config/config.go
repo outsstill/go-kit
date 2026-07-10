@@ -17,6 +17,7 @@ type Config struct {
 	Captcha CaptchaConfig `mapstructure:"captcha" yaml:"captcha"`
 	Storage StorageConfig `mapstructure:"storage" yaml:"storage"`
 	Limit   LimitConfig   `mapstructure:"limit" yaml:"limit"`
+	Paging  PagingConfig  `mapstructure:"paging" yaml:"paging"`
 	v       *viper.Viper  `mapstructure:"-"`
 }
 

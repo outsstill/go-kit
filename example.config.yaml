@@ -17,9 +17,9 @@ storage:
     - "png"
     - "jpeg"
   local:
-    path: "storage/files"
-    domain: "http://localhost:8789"
-    static: "static" #访问的替换字段避免暴露真实路径
+    base_path: "storage/files"
+    base_url: "http://localhost:8789"
+    static_prefix: "static" #访问的替换字段避免暴露真实路径
   oss:
     key_id: ""
     key_secret: ""
