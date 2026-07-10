@@ -16,6 +16,7 @@ type Config struct {
 	JWT     JWTConfig     `mapstructure:"jwt" yaml:"jwt"`
 	Captcha CaptchaConfig `mapstructure:"captcha" yaml:"captcha"`
 	Storage StorageConfig `mapstructure:"storage" yaml:"storage"`
+	Limit   LimitConfig   `mapstructure:"limit" yaml:"limit"`
 	v       *viper.Viper  `mapstructure:"-"`
 }
 
