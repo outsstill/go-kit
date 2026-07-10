@@ -48,44 +48,44 @@ func LoadConfig(path string) (*Config, error) {
 }
 
 func (c *Config) Get(key string) interface{} {
-	return viper.Get(key)
+	return c.v.Get(key)
 }
 
 func (c *Config) GetString(key string) string {
-	return viper.GetString(key)
+	return c.v.GetString(key)
 }
 
 func (c *Config) GetStringSlice(key string) []string {
-	return viper.GetStringSlice(key)
+	return c.v.GetStringSlice(key)
 }
 
 func (c *Config) GetBool(key string) bool {
-	return viper.GetBool(key)
+	return c.v.GetBool(key)
 }
 
 func (c *Config) GetInt(key string) int {
-	return viper.GetInt(key)
+	return c.v.GetInt(key)
 }
 
 func (c *Config) All() map[string]interface{} {
-	return viper.AllSettings()
+	return c.v.AllSettings()
 }
 
 func (c *Config) GetInt64(path string, defaultValue ...interface{}) int64 {
-	return cast.ToInt64(internalGet(path, defaultValue...))
+	return cast.ToInt64(c.internalGet(path, defaultValue...))
 }
 
 func (c *Config) GetFloat64(path string, defaultValue ...interface{}) float64 {
-	return cast.ToFloat64(internalGet(path, defaultValue...))
+	return cast.ToFloat64(c.internalGet(path, defaultValue...))
 }
 
-func internalGet(path string, defaultValue ...interface{}) interface{} {
+func (c *Config) internalGet(path string, defaultValue ...interface{}) interface{} {
 	// config 或者环境变量不存在的情况
-	if !viper.IsSet(path) || helpers.Empty(viper.Get(path)) {
+	if !c.v.IsSet(path) || helpers.Empty(c.v.Get(path)) {
 		if len(defaultValue) > 0 {
 			return defaultValue[0]
 		}
 		return nil
 	}
-	return viper.Get(path)
+	return c.v.Get(path)
 }
