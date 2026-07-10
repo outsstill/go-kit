@@ -39,13 +39,13 @@ func App() *GokitApp {
 type Component int
 
 const (
-	Logger Component = iota
-	DB
-	Redis
-	Cache
-	Captcha
-	Storage
-	JWT
+	Kit_Logger Component = iota
+	Kit_DB
+	Kit_Redis
+	Kit_Cache
+	Kit_Captcha
+	Kit_Storage
+	Kit_JWT
 )
 
 func (a *GokitApp) Init(cs ...Component) error {
@@ -53,19 +53,19 @@ func (a *GokitApp) Init(cs ...Component) error {
 		var err error
 
 		switch c {
-		case Logger:
+		case Kit_Logger:
 			err = a.InitLogger()
-		case DB:
+		case Kit_DB:
 			err = a.InitDB()
-		case Redis:
+		case Kit_Redis:
 			err = a.InitRedis()
-		case Cache:
+		case Kit_Cache:
 			err = a.InitCache()
-		case Captcha:
+		case Kit_Captcha:
 			err = a.InitCaptcha()
-		case Storage:
+		case Kit_Storage:
 			err = a.InitStorage()
-		case JWT:
+		case Kit_JWT:
 			err = a.InitJWT()
 		}
 
@@ -230,4 +230,32 @@ func (a *GokitApp) InitJWT() error {
 
 	a.JWT = j
 	return nil
+}
+
+func DB() database.Database {
+	return App().DB
+}
+
+func Redis() *redis.RedisClient {
+	return App().Redis
+}
+
+func Config() *config.Config {
+	return App().Config
+}
+
+func JWT() *jwt.JWT {
+	return App().JWT
+}
+
+func Cache() cache.Cache {
+	return App().Cache
+}
+
+func Captcha() *captcha.Captcha {
+	return App().Captcha
+}
+
+func Log() *logger.Logger {
+	return App().Logger
 }
