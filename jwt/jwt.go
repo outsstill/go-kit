@@ -19,6 +19,15 @@ var (
 	ErrHeaderMalformed        error = errors.New("请求头中 Authorization 格式有误")
 )
 
+type JWT_TYPE int
+
+const (
+	USER_TOKEN_TYPE JWT_TYPE = iota + 1
+	ADMIN_TOKEN_TYPE
+	MERCHANT_TOKEN_TYPE
+	AGENT_TOKEN_TYPE
+)
+
 // JWT 定义一个jwt对象
 type JWT struct {
 
