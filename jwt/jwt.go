@@ -3,6 +3,7 @@ package jwt
 import (
 	"errors"
 	"fmt"
+	"github.com/outsstill/go-kit/logger"
 	"strings"
 	"time"
 
@@ -83,7 +84,7 @@ func NewJWT(cfg Config) (*JWT, error) {
 	}
 
 	if cfg.Timezone == "" {
-		cfg.Timezone = "Asia/Shanghai"
+		cfg.Timezone = "UTC"
 	}
 
 	return &JWT{
@@ -94,7 +95,11 @@ func NewJWT(cfg Config) (*JWT, error) {
 }
 
 func (jwt *JWT) timenowInTimezone() time.Time {
-	chinaTimezone, _ := time.LoadLocation(jwt.cfg.Timezone)
+	chinaTimezone, err := time.LoadLocation(jwt.cfg.Timezone)
+	if err != nil {
+		logger.Error(fmt.Sprintf("timenowInTimezone ERROR: %s", err.Error()))
+		return time.Now().UTC()
+	}
 	return time.Now().In(chinaTimezone)
 }
 
