@@ -14,7 +14,7 @@ type Config struct {
 	Length          int     `mapstructure:"length" json:"length"`
 	Width           int     `mapstructure:"width" json:"width"`
 	Height          int     `mapstructure:"height" json:"height"`
-	NoiseCount      int     `mapstructure:"noise_count" json:"noise_count"`
+	DotCount        int     `mapstructure:"dot_count" json:"dot_count"`
 	UseNumber       bool    `mapstructure:"use_number" json:"use_number"`
 	Expiration      int64   `mapstructure:"expiration" json:"expiration"`
 	Prefix          string  `mapstructure:"prefix" json:"prefix"`
@@ -57,8 +57,8 @@ func NewCaptcha(rdb *redis.Client, cfg Config, ctx context.Context) (*Captcha, e
 	if cfg.Height <= 0 {
 		cfg.Height = 80
 	}
-	if cfg.NoiseCount <= 0 {
-		cfg.NoiseCount = 80
+	if cfg.DotCount <= 0 {
+		cfg.DotCount = 80
 	}
 	if cfg.Expiration <= 0 {
 		cfg.Expiration = int64(5 * time.Minute)
@@ -80,7 +80,7 @@ func NewCaptcha(rdb *redis.Client, cfg Config, ctx context.Context) (*Captcha, e
 			cfg.Width,
 			cfg.Length,
 			cfg.Maxskew,
-			cfg.NoiseCount,
+			cfg.DotCount,
 		)
 	} else {
 		if cfg.Charset == "" {
@@ -89,7 +89,7 @@ func NewCaptcha(rdb *redis.Client, cfg Config, ctx context.Context) (*Captcha, e
 		driver = base64Captcha.NewDriverString(
 			cfg.Height,
 			cfg.Width,
-			cfg.NoiseCount,
+			cfg.DotCount,
 			cfg.ShowLineOptions,
 			cfg.Length,
 			cfg.Charset,

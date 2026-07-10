@@ -6,7 +6,7 @@ type CaptchaConfig struct {
 	Length          int     `mapstructure:"length" json:"length"`
 	Width           int     `mapstructure:"width" json:"width"`
 	Height          int     `mapstructure:"height" json:"height"`
-	NoiseCount      int     `mapstructure:"noise_count" json:"noise_count"`
+	DotCount        int     `mapstructure:"dot_count" json:"dot_count"`
 	UseNumber       bool    `mapstructure:"use_number" json:"use_number"`
 	Expiration      int64   `mapstructure:"expiration" json:"expiration"`
 	Prefix          string  `mapstructure:"prefix" json:"prefix"`
@@ -21,7 +21,7 @@ func (c *CaptchaConfig) ToCaptcha() captcha.Config {
 		Length:          c.Length,
 		Width:           c.Width,
 		Height:          c.Height,
-		NoiseCount:      c.NoiseCount,
+		DotCount:        c.DotCount,
 		UseNumber:       c.UseNumber,
 		Expiration:      c.Expiration,
 		Prefix:          c.Prefix,
