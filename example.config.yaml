@@ -21,10 +21,10 @@ storage:
     base_url: "http://localhost:8789"
     static_prefix: "static" #访问的替换字段避免暴露真实路径
   oss:
-    key_id: ""
-    key_secret: ""
+    key: ""
+    secret: ""
     region: "cn-shanghai"
-    bucket: "space-one"
+    bucket_name: "space-one"
     domain: "https://space-one.oss-cn-shanghai.aliyuncs.com"
   qiniu:
     id: ""
