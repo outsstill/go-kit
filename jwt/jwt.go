@@ -150,6 +150,78 @@ func (jwt *JWT) ParserToken(tokenString string) (*JWTCustomClaims, error) {
 	return nil, ErrTokenInvalid
 }
 
+// ParserToken 解析 Token，中间件中调用
+func (jwt *JWT) ParserTokenGin(c *gin.Context) (*JWTCustomClaims, error) {
+	// 1. 从 Header 里获取 token
+	tokenString, parseErr := jwt.getTokenFromHeader(c)
+	if parseErr != nil {
+		return nil, parseErr
+	}
+
+	// 1. 调用 jwt 库解析用户传参的 Token
+	token, err := jwt.parseTokenString(tokenString)
+
+	if err != nil {
+		return nil, err
+	}
+
+	// 校验 Claims 对象是否有效，基于 exp（过期时间），nbf（不早于），iat（签发时间）等进行判断（如果有这些声明的话）。
+	if !token.Valid {
+		return nil, errors.New("invalid token")
+	}
+
+	// 3. 将 token 中的 claims 信息解析出来和 JWTCustomClaims 数据结构进行校验
+	if claims, ok := token.Claims.(*JWTCustomClaims); ok && token.Valid {
+		return claims, nil
+	}
+
+	return nil, ErrTokenInvalid
+}
+
+// 刷新 Token
+func (jwt *JWT) RefreshTokenGin(c *gin.Context) (string, error) {
+	// 1. 从 Header 里获取 token
+	tokenString, parseErr := jwt.getTokenFromHeader(c)
+	if parseErr != nil {
+		return "", parseErr
+	}
+
+	// 2. 调用 jwt 库解析用户传参的 Token
+	token, err := jwt.parseTokenString(tokenString)
+
+	// 3. 解析出错，未报错证明是合法的 Token（甚至未到过期时间）
+	if err != nil {
+		return "", err
+	}
+
+	// 验证 Token 是否有效
+	if !token.Valid {
+		return "", fmt.Errorf("token is invalid")
+	}
+
+	// 获取 Claims
+	claims, ok := token.Claims.(*JWTCustomClaims)
+	if !ok {
+		return "", fmt.Errorf("invalid token claims")
+	}
+
+	// 检查 Token 是否即将过期（例如剩余时间小于 5 分钟）
+	if time.Until(claims.ExpiresAt.Time) > 5*time.Minute {
+		return "", fmt.Errorf("token is not expired yet")
+	}
+
+	// 生成新的 Token
+	claims.ExpiresAt = jwtpkg.NewNumericDate(jwt.expireAtTime())
+	claims.IssuedAt = jwtpkg.NewNumericDate(time.Now())
+	claims.NotBefore = jwtpkg.NewNumericDate(time.Now())
+	newTokenString, err := jwt.createToken(*claims)
+	if err != nil {
+		return "", fmt.Errorf("failed to generate new token: %v", err)
+	}
+
+	return newTokenString, nil
+}
+
 // 刷新 Token
 func (jwt *JWT) RefreshToken(c *gin.Context) (string, error) {
 	// 1. 从 Header 里获取 token
