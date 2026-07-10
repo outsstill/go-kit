@@ -59,17 +59,34 @@ type Config struct {
 	Type       int32  `mapstructure:"type" json:"type"`
 }
 
-func (jwt *JWT) timenowInTimezone() time.Time {
-	chinaTimezone, _ := time.LoadLocation(jwt.cfg.Timezone)
-	return time.Now().In(chinaTimezone)
-}
+func NewJWT(cfg Config) (*JWT, error) {
 
-func NewJWT(cfg Config) *JWT {
+	if cfg.Key == "" {
+		return nil, errors.New("jwt key is empty")
+	}
+
+	if cfg.Expires <= 0 {
+		cfg.Expires = 120
+	}
+
+	if cfg.MaxRefresh <= 0 {
+		cfg.MaxRefresh = 10080
+	}
+
+	if cfg.Timezone == "" {
+		cfg.Timezone = "Asia/Shanghai"
+	}
+
 	return &JWT{
 		SignKey:    []byte(cfg.Key),
 		MaxRefresh: time.Duration(cfg.MaxRefresh) * time.Minute,
 		cfg:        cfg,
-	}
+	}, nil
+}
+
+func (jwt *JWT) timenowInTimezone() time.Time {
+	chinaTimezone, _ := time.LoadLocation(jwt.cfg.Timezone)
+	return time.Now().In(chinaTimezone)
 }
 
 // IssueToken 生成  Token，在登录成功时调用

@@ -2,18 +2,20 @@ package gokit
 
 import (
 	"context"
+	"errors"
 
 	"github.com/outsstill/go-kit/cache"
 	"github.com/outsstill/go-kit/captcha"
 	"github.com/outsstill/go-kit/config"
 	"github.com/outsstill/go-kit/database"
 	"github.com/outsstill/go-kit/database/mysql"
+	"github.com/outsstill/go-kit/jwt"
 	"github.com/outsstill/go-kit/logger"
 	"github.com/outsstill/go-kit/redis"
 	"github.com/outsstill/go-kit/storage"
 )
 
-type App struct {
+type GokitApp struct {
 	Config  *config.Config
 	DB      database.Database
 	Redis   *redis.RedisClient
@@ -21,11 +23,63 @@ type App struct {
 	Captcha *captcha.Captcha
 	Storage storage.IStorage
 	Logger  *logger.Logger
+	JWT     *jwt.JWT
 }
 
-func Bootstrap(configPath string) (*App, error) {
+var defaultApp *GokitApp
 
-	app := &App{}
+func Set(app *GokitApp) {
+	defaultApp = app
+}
+
+func App() *GokitApp {
+	return defaultApp
+}
+
+type Component int
+
+const (
+	Logger Component = iota
+	DB
+	Redis
+	Cache
+	Captcha
+	Storage
+	JWT
+)
+
+func (a *GokitApp) Init(cs ...Component) error {
+	for _, c := range cs {
+		var err error
+
+		switch c {
+		case Logger:
+			err = a.InitLogger()
+		case DB:
+			err = a.InitDB()
+		case Redis:
+			err = a.InitRedis()
+		case Cache:
+			err = a.InitCache()
+		case Captcha:
+			err = a.InitCaptcha()
+		case Storage:
+			err = a.InitStorage()
+		case JWT:
+			err = a.InitJWT()
+		}
+
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func Bootstrap(configPath string) (*GokitApp, error) {
+
+	app := &GokitApp{}
 
 	// config
 	if err := app.LoadConfig(configPath); err != nil {
@@ -65,8 +119,8 @@ func Bootstrap(configPath string) (*App, error) {
 	return app, nil
 }
 
-func New(configPath string) (*App, error) {
-	app := &App{}
+func New(configPath string) (*GokitApp, error) {
+	app := &GokitApp{}
 
 	// config
 	if err := app.LoadConfig(configPath); err != nil {
@@ -76,52 +130,63 @@ func New(configPath string) (*App, error) {
 	return app, nil
 }
 
-func (a *App) LoadConfig(configPath string) error {
+func (a *GokitApp) LoadConfig(configPath string) error {
 	configObj, err := config.LoadConfig(configPath)
 
 	if err != nil {
-		return err
+		return errors.New("gokit LoadConfig error: " + err.Error())
 	}
 	a.Config = configObj
 	return nil
 }
 
-func (a *App) InitLogger() error {
+func (a *GokitApp) InitLogger() error {
+	if a.Logger != nil {
+		return nil
+	}
 	err := logger.Init(a.Config.Logger.ToLoggerConfig())
 	if err != nil {
-		return err
+		return errors.New("gokit init logger error: " + err.Error())
 	}
 	a.Logger = logger.LogDefault
 	return nil
 }
 
-func (a *App) InitDB() error {
+func (a *GokitApp) InitDB() error {
 
+	if a.DB != nil {
+		return nil
+	}
 	db, err := mysql.New("default", a.Config.DB.ToMySQL())
 
 	if err != nil {
-		return err
+		return errors.New("gokit init db error: " + err.Error())
 	}
 
 	a.DB = db
 	return nil
 }
 
-func (a *App) InitRedis() error {
+func (a *GokitApp) InitRedis() error {
+	if a.Redis != nil {
+		return nil
+	}
 	redisClient, err := redis.New(a.Config.Redis.ToRedis(), context.Background())
 	if err != nil {
-		return err
+		return errors.New("gokit init reids error: " + err.Error())
 	}
 
 	a.Redis = redisClient
 	return nil
 }
 
-func (a *App) InitCache() error {
-
+func (a *GokitApp) InitCache() error {
+	if a.Cache != nil {
+		return nil
+	}
 	redisCache, err := redis.NewCache(a.Config.Redis.ToRedis(), context.Background())
 	if err != nil {
-		return err
+		return errors.New("gokit init cache error: " + err.Error())
 	}
 	cacheObj := cache.NewRedisCache(redisCache.Client, nil)
 
@@ -129,21 +194,40 @@ func (a *App) InitCache() error {
 	return nil
 }
 
-func (a *App) InitCaptcha() error {
+func (a *GokitApp) InitCaptcha() error {
+	if a.Captcha != nil {
+		return nil
+	}
 	captchaObj, err := captcha.NewCaptcha(a.Redis.Client, a.Config.Captcha.ToCaptcha(), nil)
 	if err != nil {
-		return err
+		return errors.New("gokit init captcha error: " + err.Error())
 	}
 	a.Captcha = captchaObj
 	return nil
 }
 
-func (a *App) InitStorage() error {
+func (a *GokitApp) InitStorage() error {
+	if a.Storage != nil {
+		return nil
+	}
 	storageManager, err := storage.New(a.Config.Storage.ToStorage())
 	if err != nil {
-		return err
+		return errors.New("gokit init storage error: " + err.Error())
 	}
 
 	a.Storage = storageManager.Driver()
+	return nil
+}
+
+func (a *GokitApp) InitJWT() error {
+	if a.JWT != nil {
+		return nil
+	}
+	j, err := jwt.NewJWT(a.Config.JWT.ToJWT())
+	if err != nil {
+		return errors.New("gokit JWT storage error: " + err.Error())
+	}
+
+	a.JWT = j
 	return nil
 }
