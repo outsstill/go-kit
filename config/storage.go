@@ -3,7 +3,9 @@ package config
 import "github.com/outsstill/go-kit/storage"
 
 type StorageConfig struct {
-	Driver string `mapstructure:"driver" yaml:"driver"` // local | s3 | minio
+	Driver    string   `mapstructure:"driver" yaml:"driver"` // local | s3 | minio
+	SizeLimit int64    `mapstructure:"size_limit" yaml:"size_limit"`
+	Ext       []string `mapstructure:"ext" yaml:"ext"`
 
 	Local LocalConfig `mapstructure:"local" yaml:"local"`
 	Oss   OssConfig   `mapstructure:"oss" yaml:"oss"`
@@ -43,7 +45,9 @@ type MinioConfig struct {
 
 func (c StorageConfig) ToStorage() storage.Config {
 	return storage.Config{
-		Driver: c.Driver,
+		Driver:    c.Driver,
+		SizeLimit: c.SizeLimit,
+		Ext:       c.Ext,
 		Local: storage.LocalConfig{
 			BasePath:     c.Local.BasePath,
 			BaseURL:      c.Local.BaseURL,
