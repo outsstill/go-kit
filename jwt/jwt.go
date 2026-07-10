@@ -42,10 +42,10 @@ type JWT struct {
 
 // JWTCustomClaims 自定义载荷
 type JWTCustomClaims struct {
-	UserID       string `json:"user_id"`
-	UserName     string `json:"user_name"`
-	ExpireAtTime int64  `json:"expire_time"`
-	Type         int32  `json:"type"`
+	UserID       string   `json:"user_id"`
+	UserName     string   `json:"user_name"`
+	ExpireAtTime int64    `json:"expire_time"`
+	Type         JWT_TYPE `json:"type"`
 
 	// StandardClaims 结构体实现了 Claims 接口继承了  Valid() 方法
 	// JWT 规定了7个官方字段，提供使用:
@@ -115,7 +115,7 @@ func (jwt *JWT) IssueToken(userID string, userName string, types ...int32) (stri
 		userID,
 		userName,
 		expireAt.Unix(),
-		ty,
+		JWT_TYPE(ty),
 		jwtpkg.RegisteredClaims{
 			ExpiresAt: jwtpkg.NewNumericDate(expireAt), // 过期时间
 			IssuedAt:  jwtpkg.NewNumericDate(now),      // 签发时间
