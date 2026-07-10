@@ -13,6 +13,7 @@ import (
 	"github.com/outsstill/go-kit/logger"
 	"github.com/outsstill/go-kit/redis"
 	"github.com/outsstill/go-kit/storage"
+	_ "time/tzdata"
 )
 
 type GokitApp struct {
