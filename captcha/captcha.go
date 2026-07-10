@@ -23,7 +23,7 @@ type Config struct {
 	Maxskew         float64 `mapstructure:"maxskew" json:"maxskew"`
 	ShowLineOptions int     `mapstructure:"show_line_options" json:"show_line_options"`
 	TestingKey      string  `mapstructure:"testing_key" json:"testing_key"`
-	DebugExpireTime string  `mapstructure:"debug_expire_time" json:"debug_expire_time"`
+	DebugExpireTime int64   `mapstructure:"debug_expire_time" json:"debug_expire_time"`
 }
 
 var bgCtx = context.Background()
