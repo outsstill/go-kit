@@ -1,39 +1,42 @@
+// Package console 命令行辅助方法
 package console
 
 import (
-	"bufio"
 	"fmt"
-	"io"
 	"os"
-	"strings"
+
+	"github.com/mgutz/ansi"
 )
 
-const (
-	reset  = "\033[0m"
-	red    = "\033[31m"
-	green  = "\033[32m"
-	yellow = "\033[33m"
-	blue   = "\033[34m"
-)
-
-func Info(format string, args ...any)    { color(blue, format, args...) }
-func Success(format string, args ...any) { color(green, format, args...) }
-func Warn(format string, args ...any)    { color(yellow, format, args...) }
-func Error(format string, args ...any)   { color(red, format, args...) }
-
-func Confirm(r io.Reader, w io.Writer, question string) bool {
-	if r == nil {
-		r = os.Stdin
-	}
-	if w == nil {
-		w = os.Stdout
-	}
-	_, _ = fmt.Fprintf(w, "%s [y/N]: ", question)
-	line, _ := bufio.NewReader(r).ReadString('\n')
-	line = strings.ToLower(strings.TrimSpace(line))
-	return line == "y" || line == "yes"
+// Success 打印一条成功消息，绿色输出
+func Success(msg string) {
+	colorOut(msg, "green")
 }
 
-func color(c, format string, args ...any) {
-	fmt.Printf(c+format+reset+"\n", args...)
+// Error 打印一条报错消息，红色输出
+func Error(msg string) {
+	colorOut(msg, "red")
+}
+
+// Warning 打印一条提示消息，黄色输出
+func Warning(msg string) {
+	colorOut(msg, "yellow")
+}
+
+// Exit 打印一条报错消息，并退出 os.Exit(1)
+func Exit(msg string) {
+	Error(msg)
+	os.Exit(1)
+}
+
+// ExitIf 语法糖，自带 err != nil 判断
+func ExitIf(err error) {
+	if err != nil {
+		Exit(err.Error())
+	}
+}
+
+// colorOut 内部使用，设置高亮颜色
+func colorOut(message, color string) {
+	fmt.Fprintln(os.Stdout, ansi.Color(message, color))
 }
