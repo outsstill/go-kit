@@ -20,27 +20,27 @@ type LocalConfig struct {
 }
 
 type OssConfig struct {
-	Region     string
-	BucketName string
-	Key        string
-	Secret     string
-	Domain     string
+	Region     string `mapstructure:"region"`
+	BucketName string `mapstructure:"bucket_name"`
+	Key        string `mapstructure:"key"`
+	Secret     string `mapstructure:"secret"`
+	Domain     string `mapstructure:"domain"`
 }
 
 type S3Config struct {
-	Endpoint  string
-	Bucket    string
-	AccessKey string
-	SecretKey string
-	Region    string
+	Endpoint  string `mapstructure:"endpoint"`
+	Bucket    string `mapstructure:"bucket"`
+	AccessKey string `mapstructure:"access_key"`
+	SecretKey string `mapstructure:"secret_key"`
+	Region    string `mapstructure:"region"`
 }
 
 type MinioConfig struct {
-	Endpoint  string
-	Bucket    string
-	AccessKey string
-	SecretKey string
-	SSL       bool
+	Endpoint  string `mapstructure:"endpoint"`
+	Bucket    string `mapstructure:"bucket"`
+	AccessKey string `mapstructure:"access_key"`
+	SecretKey string `mapstructure:"secret_key"`
+	SSL       bool   `mapstructure:"ssl"`
 }
 
 func (c StorageConfig) ToStorage() storage.Config {
