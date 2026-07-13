@@ -44,7 +44,7 @@ func (l *OssStorage) Put(ctx context.Context, in *UploadRequest) (*FileObj, erro
 	objectName, nowFileName := GetFileStorageRealPath(fileName, false)
 
 	res, err := l.ossClient.PutObject(ctx, &oss.PutObjectRequest{
-		Bucket:      oss.Ptr(l.cfg.BucketName),
+		Bucket:      oss.Ptr(l.cfg.Bucket),
 		Key:         oss.Ptr(objectName),
 		Body:        in.Reader,
 		ContentType: oss.Ptr(in.ContentType),
@@ -55,7 +55,7 @@ func (l *OssStorage) Put(ctx context.Context, in *UploadRequest) (*FileObj, erro
 	}
 
 	info := &FileObj{
-		Bucket:       l.cfg.BucketName,
+		Bucket:       l.cfg.Bucket,
 		Key:          objectName,
 		StoredName:   nowFileName,
 		OriginName:   fileName,
@@ -77,7 +77,7 @@ func (l *OssStorage) Get(ctx context.Context, key string) (*FileObj, io.ReadClos
 	resp, err := l.ossClient.GetObject(
 		ctx,
 		&oss.GetObjectRequest{
-			Bucket: oss.Ptr(l.cfg.BucketName),
+			Bucket: oss.Ptr(l.cfg.Bucket),
 			Key:    oss.Ptr(key),
 		},
 	)
@@ -87,7 +87,7 @@ func (l *OssStorage) Get(ctx context.Context, key string) (*FileObj, io.ReadClos
 	}
 
 	info := &FileObj{
-		Bucket: l.cfg.BucketName,
+		Bucket: l.cfg.Bucket,
 		Key:    key,
 		Driver: l.Driver(),
 		URL:    strings.TrimRight(l.cfg.Domain, "/") + "/" + key,
@@ -99,7 +99,7 @@ func (l *OssStorage) Get(ctx context.Context, key string) (*FileObj, io.ReadClos
 func (l *OssStorage) Delete(ctx context.Context, key string) error {
 
 	_, err := l.ossClient.DeleteObject(ctx, &oss.DeleteObjectRequest{
-		Bucket: oss.Ptr(l.cfg.BucketName),
+		Bucket: oss.Ptr(l.cfg.Bucket),
 		Key:    oss.Ptr(key),
 	})
 

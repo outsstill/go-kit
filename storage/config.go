@@ -19,11 +19,11 @@ type LocalConfig struct {
 }
 
 type OssConfig struct {
-	Region     string `mapstructure:"region"`
-	BucketName string `mapstructure:"bucket_name"`
-	Key        string `mapstructure:"key"`
-	Secret     string `mapstructure:"secret"`
-	Domain     string `mapstructure:"domain"`
+	Region string `mapstructure:"region"`
+	Bucket string `mapstructure:"bucket"`
+	Key    string `mapstructure:"key"`
+	Secret string `mapstructure:"secret"`
+	Domain string `mapstructure:"domain"`
 }
 
 type S3Config struct {

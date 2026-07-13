@@ -20,11 +20,11 @@ type LocalConfig struct {
 }
 
 type OssConfig struct {
-	Region     string `mapstructure:"region"`
-	BucketName string `mapstructure:"bucket_name"`
-	Key        string `mapstructure:"key"`
-	Secret     string `mapstructure:"secret"`
-	Domain     string `mapstructure:"domain"`
+	Region string `mapstructure:"region"`
+	Bucket string `mapstructure:"bucket"`
+	Key    string `mapstructure:"key"`
+	Secret string `mapstructure:"secret"`
+	Domain string `mapstructure:"domain"`
 }
 
 type S3Config struct {
@@ -54,11 +54,11 @@ func (c StorageConfig) ToStorage() storage.Config {
 			StaticPrefix: c.Local.StaticPrefix,
 		},
 		Oss: storage.OssConfig{
-			Region:     c.Oss.Region,
-			BucketName: c.Oss.BucketName,
-			Key:        c.Oss.Key,
-			Secret:     c.Oss.Secret,
-			Domain:     c.Oss.Domain,
+			Region: c.Oss.Region,
+			Bucket: c.Oss.Bucket,
+			Key:    c.Oss.Key,
+			Secret: c.Oss.Secret,
+			Domain: c.Oss.Domain,
 		},
 		S3: storage.S3Config{
 			Endpoint:  c.S3.Endpoint,
