@@ -47,45 +47,47 @@ func LoadConfig(path string) (*Config, error) {
 	return s, nil
 }
 
-func (c *Config) Get(key string) interface{} {
-	return c.v.Get(key)
+func (c *Config) Get(key string, defaultValue ...any) any {
+	return c.internalGet(key, defaultValue...)
 }
 
-func (c *Config) GetString(key string) string {
-	return c.v.GetString(key)
+func (c *Config) GetString(key string, defaultValue ...any) string {
+	return cast.ToString(c.internalGet(key, defaultValue...))
 }
 
-func (c *Config) GetStringSlice(key string) []string {
-	return c.v.GetStringSlice(key)
+func (c *Config) GetStringSlice(key string, defaultValue ...any) []string {
+	return cast.ToStringSlice(c.internalGet(key, defaultValue...))
 }
 
-func (c *Config) GetBool(key string) bool {
-	return c.v.GetBool(key)
+func (c *Config) GetBool(key string, defaultValue ...any) bool {
+	return cast.ToBool(c.internalGet(key, defaultValue...))
 }
 
-func (c *Config) GetInt(key string) int {
-	return c.v.GetInt(key)
+func (c *Config) GetInt(key string, defaultValue ...any) int {
+	return cast.ToInt(c.internalGet(key, defaultValue...))
 }
 
-func (c *Config) All() map[string]interface{} {
+func (c *Config) All() map[string]any {
 	return c.v.AllSettings()
 }
 
-func (c *Config) GetInt64(path string, defaultValue ...interface{}) int64 {
+func (c *Config) GetInt64(path string, defaultValue ...any) int64 {
 	return cast.ToInt64(c.internalGet(path, defaultValue...))
 }
 
-func (c *Config) GetFloat64(path string, defaultValue ...interface{}) float64 {
+func (c *Config) GetFloat64(path string, defaultValue ...any) float64 {
 	return cast.ToFloat64(c.internalGet(path, defaultValue...))
 }
 
-func (c *Config) internalGet(path string, defaultValue ...interface{}) interface{} {
+func (c *Config) internalGet(path string, defaultValue ...any) any {
+
+	v := c.v.Get(path)
 	// config 或者环境变量不存在的情况
-	if !c.v.IsSet(path) || helpers.Empty(c.v.Get(path)) {
+	if !c.v.IsSet(path) || helpers.Empty(v) {
 		if len(defaultValue) > 0 {
 			return defaultValue[0]
 		}
 		return nil
 	}
-	return c.v.Get(path)
+	return v
 }
