@@ -30,3 +30,31 @@ go get github.com/<owner>/<repo>@v0.1.0
 - `hash`: password, HMAC, SHA, MD5, and random token helpers.
 - `console`: colored console output and confirmation prompts.
 - `auth`: JWT HS256 helpers and password wrapper.
+
+
+## usage
+
+```go
+var err error
+
+app, err := gokit.New(configName)
+
+if err != nil {
+    panic(err)
+}
+
+// 按需加载
+err = gokit.App().Init(
+gokit.Kit_Logger,
+gokit.Kit_DB,
+gokit.Kit_Redis,
+gokit.Kit_Cache,
+gokit.Kit_JWT,
+)
+
+if err != nil {
+panic(err)
+}
+
+gokit.Set(app)
+```
