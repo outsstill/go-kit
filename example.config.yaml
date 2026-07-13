@@ -102,7 +102,7 @@ captcha:
   length: 6 # 验证码的长度
   maxskew: 0.7 # 数字的最大倾斜角度
   dot_count: 80 # 图片背景里的混淆点数量
-  expire_time: 15 # 过期时间，单位是分钟
+  expiration: 15 # 过期时间，单位是分钟
   debug_expire_time: 10086 # debug 模式下的过期时间，方便本地开发调试
   testing_key: "captcha_skip_test" # 非 production 环境，使用此 key 可跳过验证，方便测试
 
