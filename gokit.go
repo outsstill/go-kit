@@ -88,7 +88,7 @@ func New(configPath string, cs ...Component) (*GokitApp, error) {
 	app := &GokitApp{}
 
 	// config
-	if err := app.LoadConfig(configPath); err != nil {
+	if err := app.loadConfig(configPath); err != nil {
 		return nil, err
 	}
 
@@ -101,7 +101,7 @@ func New(configPath string, cs ...Component) (*GokitApp, error) {
 	return app, nil
 }
 
-func (a *GokitApp) LoadConfig(configPath string) error {
+func (a *GokitApp) loadConfig(configPath string) error {
 	configObj, err := config.LoadConfig(configPath)
 
 	if err != nil {
@@ -233,4 +233,8 @@ func Captcha() *captcha.Captcha {
 
 func Log() *logger.Logger {
 	return App().Logger
+}
+
+func Storage() storage.IStorage {
+	return App().Storage
 }
