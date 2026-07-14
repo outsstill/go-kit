@@ -15,6 +15,7 @@ import (
 	"github.com/outsstill/go-kit/logger"
 	"github.com/outsstill/go-kit/redis"
 	"github.com/outsstill/go-kit/storage"
+	"gorm.io/gorm"
 )
 
 type GokitApp struct {
@@ -192,8 +193,12 @@ func (a *GokitApp) InitJWT() error {
 	return nil
 }
 
-func DB() database.Database {
+func Database() database.Database {
 	return App().DB
+}
+
+func DB() *gorm.DB {
+	return App().DB.DB()
 }
 
 func Redis() *redis.RedisClient {

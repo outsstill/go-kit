@@ -83,7 +83,7 @@ logger:
   compress: false # 是否压缩，压缩日志不方便查看，我们设置为 false（压缩可节省空间）
   type: "daily"
   level: "debug",
-  encoding: "json"
+  encoding: "json" # 测试时建议使用 console 方便在终端查看
   to_console: true # 是否终端输出
   to_file: true # 是否写入文件
 
