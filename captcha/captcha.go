@@ -159,7 +159,7 @@ func (c *Captcha) Delete(id string) error {
 }
 
 func (s *redisStore) Set(id string, value string) error {
-	err := s.rdb.Set(bgCtx, s.cfg.Prefix+id, value, time.Duration(s.cfg.Expiration)).Err()
+	err := s.rdb.Set(bgCtx, s.cfg.Prefix+id, value, time.Duration(s.cfg.Expiration)*time.Minute).Err()
 
 	return err
 }
