@@ -31,11 +31,11 @@ type GokitApp struct {
 
 var defaultApp *GokitApp
 
-func Set(app *GokitApp) {
-	defaultApp = app
-}
-
 func App() *GokitApp {
+	if defaultApp == nil {
+		panic("is not initialized")
+	}
+
 	return defaultApp
 }
 
@@ -80,13 +80,23 @@ func (a *GokitApp) Init(cs ...Component) error {
 	return nil
 }
 
-func New(configPath string) (*GokitApp, error) {
+func New(configPath string, cs ...Component) (*GokitApp, error) {
+	if defaultApp != nil {
+		return defaultApp, nil
+	}
+
 	app := &GokitApp{}
 
 	// config
 	if err := app.LoadConfig(configPath); err != nil {
 		return nil, err
 	}
+
+	if err := app.Init(cs...); err != nil {
+		return nil, err
+	}
+
+	defaultApp = app
 
 	return app, nil
 }
