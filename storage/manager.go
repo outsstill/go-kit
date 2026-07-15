@@ -12,9 +12,9 @@ func New(cfg Config) (*Manager, error) {
 
 	switch cfg.Driver {
 	case "local":
-		s, err = NewLocal(cfg.Local)
+		s, err = NewLocal(cfg)
 	case "oss":
-		s, err = NewOssStorage(cfg.Oss)
+		s, err = NewOssStorage(cfg)
 	default:
 		return nil, errors.New("unknown storage driver")
 	}

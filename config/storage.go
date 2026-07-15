@@ -3,6 +3,7 @@ package config
 import "github.com/outsstill/go-kit/storage"
 
 type StorageConfig struct {
+	Prefix    string   `mapstructure:"prefix" yaml:"prefix"`
 	Driver    string   `mapstructure:"driver" yaml:"driver"` // local | s3 | minio
 	SizeLimit int64    `mapstructure:"size_limit" yaml:"size_limit"`
 	Ext       []string `mapstructure:"ext" yaml:"ext"`
@@ -45,6 +46,7 @@ type MinioConfig struct {
 
 func (c StorageConfig) ToStorage() storage.Config {
 	return storage.Config{
+		Prefix:    c.Prefix,
 		Driver:    c.Driver,
 		SizeLimit: c.SizeLimit,
 		Ext:       c.Ext,

@@ -59,7 +59,7 @@ type FileObj struct {
 }
 
 // 获取文件存储名称(包含完整路径)
-func GetFileStorageRealPath(fileName string, isOriginName bool) (string, string) {
+func GetFileStorageRealPath(fileName string, isOriginName bool, prefix string) (string, string) {
 	originFileName := fileName
 	if !isOriginName {
 		fileOriExt := filepath.Ext(fileName) // 获取文件扩展名 这里包含了 .
@@ -69,15 +69,13 @@ func GetFileStorageRealPath(fileName string, isOriginName bool) (string, string)
 		originFileName = cast.ToString(randomNumber) + fileOriExt
 	}
 
-	objectName := GetFileStoragePathPrefix() + "/" + originFileName
+	objectName := GetFileStoragePathPrefix(prefix) + "/" + originFileName
 
 	return objectName, originFileName
 }
 
-func GetFileStoragePathPrefix() string {
-	formatted := time.Now().Format("20060102")
-
-	return formatted
+func GetFileStoragePathPrefix(prefix string) string {
+	return fmt.Sprintf("%s/%s", prefix, time.Now().Format("20060102"))
 }
 
 func safeJoin(base, p string) (string, error) {

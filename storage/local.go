@@ -6,15 +6,16 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/google/uuid"
 )
 
 type LocalStorage struct {
-	cfg LocalConfig
+	cfg Config
 }
 
-func NewLocal(cfg LocalConfig) (*LocalStorage, error) {
+func NewLocal(cfg Config) (*LocalStorage, error) {
 	return &LocalStorage{
 		cfg: cfg,
 	}, nil
@@ -25,9 +26,9 @@ func (l *LocalStorage) Driver() string { return "local" }
 func (l *LocalStorage) Put(ctx context.Context, in *UploadRequest) (*FileObj, error) {
 
 	f := &FileObj{}
-	realPath, nowFileName := GetFileStorageRealPath(in.Filename, false)
+	realPath, nowFileName := GetFileStorageRealPath(in.Filename, false, l.cfg.Prefix)
 
-	fullPath, err := safeJoin(l.cfg.BasePath, realPath) // 真实的地址
+	fullPath, err := safeJoin(l.cfg.Local.BasePath, realPath) // 真实的地址
 
 	if err != nil {
 		return nil, err
@@ -60,12 +61,13 @@ func (l *LocalStorage) Put(ctx context.Context, in *UploadRequest) (*FileObj, er
 	f.OriginName = in.Filename
 	f.StoredName = nowFileName
 	f.URL = l.URL(ctx, realPath)
+	f.LastModified = time.Now()
 
 	return f, nil
 }
 
 func (l *LocalStorage) Get(ctx context.Context, key string) (*FileObj, io.ReadCloser, error) {
-	full, err := safeJoin(l.cfg.BasePath, key)
+	full, err := safeJoin(l.cfg.Local.BasePath, key)
 	if err != nil {
 		return &FileObj{}, nil, err
 	}
@@ -82,7 +84,7 @@ func (l *LocalStorage) Get(ctx context.Context, key string) (*FileObj, io.ReadCl
 }
 
 func (l *LocalStorage) Delete(ctx context.Context, key string) error {
-	full, err := safeJoin(l.cfg.BasePath, key)
+	full, err := safeJoin(l.cfg.Local.BasePath, key)
 	if err != nil {
 		return err
 	}
@@ -97,5 +99,5 @@ func (l *LocalStorage) Delete(ctx context.Context, key string) error {
 }
 
 func (l *LocalStorage) URL(ctx context.Context, key string) string {
-	return strings.TrimRight(l.cfg.BaseURL, "/") + "/" + strings.TrimLeft(key, "/")
+	return strings.TrimRight(l.cfg.Local.BaseURL, "/") + "/" + strings.TrimLeft(key, "/")
 }

@@ -13,17 +13,17 @@ import (
 )
 
 type OssStorage struct {
-	cfg       OssConfig
+	cfg       Config
 	ossClient *oss.Client
 }
 
-func NewOssStorage(cfg OssConfig) (*OssStorage, error) {
+func NewOssStorage(cfg Config) (*OssStorage, error) {
 	var (
 		//region     = "oss-cn-shanghai.aliyuncs.com"
-		region = cast.ToString(cfg.Region)
+		region = cast.ToString(cfg.Oss.Region)
 	)
-	_ = os.Setenv("OSS_ACCESS_KEY_ID", cast.ToString(cfg.Key))
-	_ = os.Setenv("OSS_ACCESS_KEY_SECRET", cast.ToString(cfg.Secret))
+	_ = os.Setenv("OSS_ACCESS_KEY_ID", cast.ToString(cfg.Oss.Key))
+	_ = os.Setenv("OSS_ACCESS_KEY_SECRET", cast.ToString(cfg.Oss.Secret))
 	ossCfg := oss.LoadDefaultConfig().
 		WithCredentialsProvider(credentials.NewEnvironmentVariableCredentialsProvider()).
 		WithRegion(region)
@@ -41,10 +41,10 @@ func (l *OssStorage) Put(ctx context.Context, in *UploadRequest) (*FileObj, erro
 	// 从请求中获取文件
 	fileName := in.Filename
 	fileSize := in.Size
-	objectName, nowFileName := GetFileStorageRealPath(fileName, false)
+	objectName, nowFileName := GetFileStorageRealPath(fileName, false, l.cfg.Prefix)
 
 	res, err := l.ossClient.PutObject(ctx, &oss.PutObjectRequest{
-		Bucket:      oss.Ptr(l.cfg.Bucket),
+		Bucket:      oss.Ptr(l.cfg.Oss.Bucket),
 		Key:         oss.Ptr(objectName),
 		Body:        in.Reader,
 		ContentType: oss.Ptr(in.ContentType),
@@ -55,7 +55,7 @@ func (l *OssStorage) Put(ctx context.Context, in *UploadRequest) (*FileObj, erro
 	}
 
 	info := &FileObj{
-		Bucket:       l.cfg.Bucket,
+		Bucket:       l.cfg.Oss.Bucket,
 		Key:          objectName,
 		StoredName:   nowFileName,
 		OriginName:   fileName,
@@ -77,7 +77,7 @@ func (l *OssStorage) Get(ctx context.Context, key string) (*FileObj, io.ReadClos
 	resp, err := l.ossClient.GetObject(
 		ctx,
 		&oss.GetObjectRequest{
-			Bucket: oss.Ptr(l.cfg.Bucket),
+			Bucket: oss.Ptr(l.cfg.Oss.Bucket),
 			Key:    oss.Ptr(key),
 		},
 	)
@@ -87,10 +87,10 @@ func (l *OssStorage) Get(ctx context.Context, key string) (*FileObj, io.ReadClos
 	}
 
 	info := &FileObj{
-		Bucket: l.cfg.Bucket,
+		Bucket: l.cfg.Oss.Bucket,
 		Key:    key,
 		Driver: l.Driver(),
-		URL:    strings.TrimRight(l.cfg.Domain, "/") + "/" + key,
+		URL:    strings.TrimRight(l.cfg.Oss.Domain, "/") + "/" + key,
 	}
 
 	return info, resp.Body, nil
@@ -99,7 +99,7 @@ func (l *OssStorage) Get(ctx context.Context, key string) (*FileObj, io.ReadClos
 func (l *OssStorage) Delete(ctx context.Context, key string) error {
 
 	_, err := l.ossClient.DeleteObject(ctx, &oss.DeleteObjectRequest{
-		Bucket: oss.Ptr(l.cfg.Bucket),
+		Bucket: oss.Ptr(l.cfg.Oss.Bucket),
 		Key:    oss.Ptr(key),
 	})
 
@@ -111,5 +111,5 @@ func (l *OssStorage) Delete(ctx context.Context, key string) error {
 }
 
 func (l *OssStorage) URL(ctx context.Context, key string) string {
-	return strings.TrimRight(l.cfg.Domain, "/") + "/" + key
+	return strings.TrimRight(l.cfg.Oss.Domain, "/") + "/" + key
 }

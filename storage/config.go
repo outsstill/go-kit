@@ -1,6 +1,7 @@
 package storage
 
 type Config struct {
+	Prefix string `mapstructure:"prefix" yaml:"prefix"`
 	Driver string `mapstructure:"driver" yaml:"driver"` // local | s3 | minio
 
 	SizeLimit int64    `mapstructure:"size_limit" yaml:"size_limit"`

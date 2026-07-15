@@ -10,6 +10,7 @@ app:
 
 # 云存储
 storage:
+  prefix: "" # 默认使用 app.name
   driver: "local"
   size_limit: 10485760 # 10M
   ext: # 允许上传的文件类型
