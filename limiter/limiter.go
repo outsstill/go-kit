@@ -1,66 +1,80 @@
+// Package limiter 处理限流逻辑
 package limiter
 
 import (
-	"sync"
-	"time"
+	"strings"
+
+	"github.com/outsstill/go-kit/config"
+	"github.com/outsstill/go-kit/logger"
+
+	"github.com/gin-gonic/gin"
+	limiterlib "github.com/ulule/limiter/v3"
+	sredis "github.com/ulule/limiter/v3/drivers/store/redis"
 )
 
-type TokenBucket struct {
-	mu       sync.Mutex
-	rate     float64
-	capacity float64
-	tokens   float64
-	last     time.Time
+type Limiter struct {
+	store sredis.Client
+	cfg   config.Config
 }
 
-func NewTokenBucket(ratePerSecond, capacity int) *TokenBucket {
-	now := time.Now()
-	return &TokenBucket{rate: float64(ratePerSecond), capacity: float64(capacity), tokens: float64(capacity), last: now}
-}
-
-func (l *TokenBucket) Allow() bool {
-	return l.AllowN(1)
-}
-
-func (l *TokenBucket) AllowN(n int) bool {
-	l.mu.Lock()
-	defer l.mu.Unlock()
-	now := time.Now()
-	l.tokens += now.Sub(l.last).Seconds() * l.rate
-	if l.tokens > l.capacity {
-		l.tokens = l.capacity
+func NewLimiter(s sredis.Client, c config.Config) *Limiter {
+	return &Limiter{
+		store: s,
+		cfg:   c,
 	}
-	l.last = now
-	if l.tokens >= float64(n) {
-		l.tokens -= float64(n)
-		return true
-	}
-	return false
 }
 
-type FixedWindow struct {
-	mu      sync.Mutex
-	limit   int
-	window  time.Duration
-	resetAt time.Time
-	count   int
+// GetKeyIP 获取 Limitor 的 Key，IP
+func (l *Limiter) GetKeyIP(c *gin.Context) string {
+	return c.ClientIP()
 }
 
-func NewFixedWindow(limit int, window time.Duration) *FixedWindow {
-	return &FixedWindow{limit: limit, window: window, resetAt: time.Now().Add(window)}
+// GetKeyRouteWithIP Limitor 的 Key，路由+IP，针对单个路由做限流
+func (l *Limiter) GetKeyRouteWithIP(c *gin.Context) string {
+	return routeToKeyString(c.FullPath()) + c.ClientIP()
 }
 
-func (l *FixedWindow) Allow() bool {
-	l.mu.Lock()
-	defer l.mu.Unlock()
-	now := time.Now()
-	if now.After(l.resetAt) {
-		l.count = 0
-		l.resetAt = now.Add(l.window)
+// CheckRate 检测请求是否超额
+func (l *Limiter) CheckRate(c *gin.Context, key string, formatted string) (limiterlib.Context, error) {
+
+	// 实例化依赖的 limiter 包的 limiter.Rate 对象
+	var context limiterlib.Context
+	rate, err := limiterlib.NewRateFromFormatted(formatted)
+	if err != nil {
+		logger.LogIf(err)
+		return context, err
 	}
-	if l.count >= l.limit {
-		return false
+
+	// 初始化存储，使用我们程序里共用的 redis.Redis 对象
+	store, err := sredis.NewStoreWithOptions(l.store, limiterlib.StoreOptions{
+		// 为 limiter 设置前缀，保持 redis 里数据的整洁
+		Prefix: l.cfg.App.Name + ":limiter",
+	})
+	if err != nil {
+		logger.LogIf(err)
+		return context, err
 	}
-	l.count++
-	return true
+
+	// 使用上面的初始化的 limiter.Rate 对象和存储对象
+	limiterObj := limiterlib.New(store, rate)
+
+	// 获取限流的结果
+	if c.GetBool("limiter-once") {
+		// Peek() 取结果，不增加访问次数
+		return limiterObj.Peek(c, key)
+	} else {
+
+		// 确保多个路由组里调用 LimitIP 进行限流时，只增加一次访问次数。
+		c.Set("limiter-once", true)
+
+		// Get() 取结果且增加访问次数
+		return limiterObj.Get(c, key)
+	}
+}
+
+// routeToKeyString 辅助方法，将 URL 中的 / 格式为 -
+func routeToKeyString(routeName string) string {
+	routeName = strings.ReplaceAll(routeName, "/", "-")
+	routeName = strings.ReplaceAll(routeName, ":", "_")
+	return routeName
 }

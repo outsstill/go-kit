@@ -12,6 +12,7 @@ import (
 	"github.com/outsstill/go-kit/database"
 	"github.com/outsstill/go-kit/database/mysql"
 	"github.com/outsstill/go-kit/jwt"
+	"github.com/outsstill/go-kit/limiter"
 	"github.com/outsstill/go-kit/logger"
 	"github.com/outsstill/go-kit/redis"
 	"github.com/outsstill/go-kit/storage"
@@ -27,6 +28,7 @@ type GokitApp struct {
 	Storage storage.IStorage
 	Logger  *logger.Logger
 	JWT     *jwt.JWT
+	Limiter *limiter.Limiter
 }
 
 var defaultApp *GokitApp
@@ -49,6 +51,7 @@ const (
 	Kit_Captcha
 	Kit_Storage
 	Kit_JWT
+	Kit_Limiter
 )
 
 func (a *GokitApp) Init(cs ...Component) error {
@@ -70,6 +73,8 @@ func (a *GokitApp) Init(cs ...Component) error {
 			err = a.InitStorage()
 		case Kit_JWT:
 			err = a.InitJWT()
+		case Kit_Limiter:
+			err = a.InitLimiter()
 		}
 
 		if err != nil {
@@ -203,6 +208,16 @@ func (a *GokitApp) InitJWT() error {
 	return nil
 }
 
+func (a *GokitApp) InitLimiter() error {
+	if a.Limiter != nil {
+		return nil
+	}
+	l := limiter.NewLimiter(a.Redis.Client, *a.Config)
+
+	a.Limiter = l
+	return nil
+}
+
 func Database() database.Database {
 	return App().DB
 }
@@ -237,4 +252,8 @@ func Log() *logger.Logger {
 
 func Storage() storage.IStorage {
 	return App().Storage
+}
+
+func Limiter() *limiter.Limiter {
+	return App().Limiter
 }
