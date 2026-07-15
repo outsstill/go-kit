@@ -212,6 +212,11 @@ func (a *GokitApp) InitLimiter() error {
 	if a.Limiter != nil {
 		return nil
 	}
+
+	if a.Config == nil {
+		return errors.New("gokit init limiter config is nil")
+	}
+
 	l := limiter.NewLimiter(a.Redis.Client, *a.Config)
 
 	a.Limiter = l
