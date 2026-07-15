@@ -17,6 +17,9 @@ import (
 // * 1000 reqs/hour: "1000-H"
 // * 2000 reqs/day: "2000-D"
 func LimitIPGin(l *Limiter, limit string) gin.HandlerFunc {
+	if l == nil {
+		panic("limiter is nil")
+	}
 	return func(c *gin.Context) {
 		// 针对 IP 限流
 		key := l.GetKeyIP(c)
@@ -29,7 +32,9 @@ func LimitIPGin(l *Limiter, limit string) gin.HandlerFunc {
 
 // LimitPerRouteGin gin 限流中间件，用在单独的路由中
 func LimitPerRouteGin(l *Limiter, limit string) gin.HandlerFunc {
-
+	if l == nil {
+		panic("limiter is nil")
+	}
 	return func(c *gin.Context) {
 
 		// 针对单个路由，增加访问次数
