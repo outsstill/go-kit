@@ -59,7 +59,7 @@ func (l *OssStorage) Put(ctx context.Context, in *UploadRequest) (*FileObj, erro
 		Key:          objectName,
 		StoredName:   nowFileName,
 		OriginName:   fileName,
-		Path:         in.Path,
+		Path:         objectName,
 		Ext:          GetFileExt(fileName),
 		Driver:       l.Driver(),
 		Size:         fileSize,
