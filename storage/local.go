@@ -55,12 +55,12 @@ func (l *LocalStorage) Put(ctx context.Context, in *UploadRequest) (*FileObj, er
 	f.Size = size
 	f.ID = uuid.NewString()
 	f.ContentType = in.ContentType
-	f.Path = in.Path
+	f.Path = fullPath
 	f.Key = realPath
 	f.Ext = GetFileExt(in.Filename)
 	f.OriginName = in.Filename
 	f.StoredName = nowFileName
-	f.URL = l.URL(ctx, realPath)
+	f.URL = l.URL(ctx, fullPath)
 	f.LastModified = time.Now()
 
 	return f, nil
@@ -98,6 +98,7 @@ func (l *LocalStorage) Delete(ctx context.Context, key string) error {
 	return nil
 }
 
-func (l *LocalStorage) URL(ctx context.Context, key string) string {
-	return strings.TrimRight(l.cfg.Local.BaseURL, "/") + "/" + strings.TrimLeft(key, "/")
+func (l *LocalStorage) URL(ctx context.Context, path string) string {
+	path = strings.ReplaceAll(path, l.cfg.Local.BasePath, l.cfg.Local.StaticPrefix)
+	return strings.TrimRight(l.cfg.Local.BaseURL, "/") + "/" + strings.TrimLeft(path, "/")
 }
