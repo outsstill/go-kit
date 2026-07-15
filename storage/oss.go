@@ -42,7 +42,7 @@ func (l *OssStorage) Put(ctx context.Context, in *UploadRequest) (*FileObj, erro
 	fileName := in.Filename
 	fileSize := in.Size
 	objectName, nowFileName := GetFileStorageRealPath(fileName, false, l.cfg.Prefix)
-
+	objectName = strings.Trim(objectName, "/")
 	res, err := l.ossClient.PutObject(ctx, &oss.PutObjectRequest{
 		Bucket:      oss.Ptr(l.cfg.Oss.Bucket),
 		Key:         oss.Ptr(objectName),
@@ -56,7 +56,7 @@ func (l *OssStorage) Put(ctx context.Context, in *UploadRequest) (*FileObj, erro
 
 	info := &FileObj{
 		Bucket:       l.cfg.Oss.Bucket,
-		Key:          strings.Trim(objectName, "/"),
+		Key:          objectName,
 		StoredName:   nowFileName,
 		OriginName:   fileName,
 		Path:         in.Path,
