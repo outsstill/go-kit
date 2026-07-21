@@ -2,14 +2,16 @@ package storage
 
 import (
 	"context"
+	openapi "github.com/alibabacloud-go/darabonba-openapi/v2/client"
+	sts "github.com/alibabacloud-go/sts-20150401/v2/client"
+	"github.com/alibabacloud-go/tea/tea"
+	"github.com/aliyun/alibabacloud-oss-go-sdk-v2/oss"
+	"github.com/aliyun/alibabacloud-oss-go-sdk-v2/oss/credentials"
+	"github.com/spf13/cast"
 	"io"
 	"os"
 	"strings"
 	"time"
-
-	"github.com/aliyun/alibabacloud-oss-go-sdk-v2/oss"
-	"github.com/aliyun/alibabacloud-oss-go-sdk-v2/oss/credentials"
-	"github.com/spf13/cast"
 )
 
 type OssStorage struct {
@@ -112,4 +114,43 @@ func (l *OssStorage) Delete(ctx context.Context, key string) error {
 
 func (l *OssStorage) URL(ctx context.Context, key string) string {
 	return strings.TrimRight(l.cfg.Oss.Domain, "/") + "/" + key
+}
+
+func (l *OssStorage) Certificate(ctx context.Context, in *UploadRequest) (*UploadCredential, error) {
+
+	config := &openapi.Config{
+		AccessKeyId:     tea.String(l.cfg.Oss.Key),
+		AccessKeySecret: tea.String(l.cfg.Oss.Secret),
+		Endpoint:        tea.String(l.cfg.Oss.Endpoint),
+	}
+
+	client, err := sts.NewClient(config)
+	if err != nil {
+		return nil, err
+	}
+
+	req := &sts.AssumeRoleRequest{
+		RoleArn:         tea.String(l.cfg.Oss.RoleArn),
+		RoleSessionName: tea.String(in.sessionName),
+		DurationSeconds: tea.Int64(l.cfg.Oss.Duration),
+	}
+
+	resp, err := client.AssumeRole(req)
+	if err != nil {
+		return nil, err
+	}
+
+	expire, _ := time.Parse(
+		time.RFC3339,
+		tea.StringValue(resp.Body.Credentials.Expiration),
+	)
+
+	cfg := &UploadCredential{
+		AccessKeyID:     tea.StringValue(resp.Body.Credentials.AccessKeyId),
+		AccessKeySecret: tea.StringValue(resp.Body.Credentials.AccessKeySecret),
+		SecurityToken:   tea.StringValue(resp.Body.Credentials.SecurityToken),
+		ExpireAt:        expire.Unix(),
+	}
+
+	return cfg, nil
 }

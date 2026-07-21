@@ -102,3 +102,7 @@ func (l *LocalStorage) URL(ctx context.Context, path string) string {
 	path = strings.ReplaceAll(path, l.cfg.Local.BasePath, l.cfg.Local.StaticPrefix)
 	return strings.TrimRight(l.cfg.Local.BaseURL, "/") + "/" + strings.TrimLeft(path, "/")
 }
+
+func (l *LocalStorage) Certificate(ctx context.Context, in *UploadRequest) (*UploadCredential, error) {
+	return &UploadCredential{}, nil
+}

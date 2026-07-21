@@ -25,6 +25,8 @@ type IStorage interface {
 	Driver() string
 
 	URL(ctx context.Context, key string) string
+
+	Certificate(ctx context.Context, req *UploadRequest) (*UploadCredential, error)
 }
 
 type UploadRequest struct {
@@ -32,6 +34,7 @@ type UploadRequest struct {
 	Path        string
 	Filename    string
 	ContentType string
+	sessionName string
 
 	Size   int64
 	Reader io.Reader
@@ -56,6 +59,25 @@ type FileObj struct {
 	Driver       string            `json:"driver"`
 	IsPublic     bool              `json:"is_public"`
 	Metadata     map[string]string `json:"metadata,omitempty"`
+}
+
+// 前端上传凭证
+type UploadCredential struct {
+	Driver     string `json:"driver"`
+	UploadType string `json:"uploadType"`
+
+	Bucket    string `json:"bucket,omitempty"`
+	Region    string `json:"region,omitempty"`
+	Endpoint  string `json:"endpoint,omitempty"`
+	Directory string `json:"directory,omitempty"`
+
+	Key      string `json:"key"`
+	ExpireAt int64  `json:"expireAt"`
+
+	AccessKeyID     string         `json:"access_key_id,omitempty"`
+	AccessKeySecret string         `json:"access_key_secret,omitempty"`
+	SecurityToken   string         `json:"security_token,omitempty"`
+	Credential      map[string]any `json:"credential"`
 }
 
 // 获取文件存储名称(包含完整路径)

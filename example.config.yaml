@@ -27,6 +27,9 @@ storage:
     region: "cn-shanghai"
     bucket: "space-one"
     domain: "https://space-one.oss-cn-shanghai.aliyuncs.com"
+    role_arn: "" # 前端直传时所用到的角色
+    duration: 3600 # 直传临时凭证过期时间单位为秒
+    endpoint: "sts.cn-hangzhou.aliyuncs.com" # 一般为固定值
   qiniu:
     id: ""
     key: ""

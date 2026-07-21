@@ -1,6 +1,8 @@
 package config
 
-import "github.com/outsstill/go-kit/storage"
+import (
+	"github.com/outsstill/go-kit/storage"
+)
 
 type StorageConfig struct {
 	Prefix    string   `mapstructure:"prefix" yaml:"prefix"`
@@ -21,11 +23,14 @@ type LocalConfig struct {
 }
 
 type OssConfig struct {
-	Region string `mapstructure:"region"`
-	Bucket string `mapstructure:"bucket"`
-	Key    string `mapstructure:"key"`
-	Secret string `mapstructure:"secret"`
-	Domain string `mapstructure:"domain"`
+	Region   string `mapstructure:"region"`
+	Bucket   string `mapstructure:"bucket"`
+	Key      string `mapstructure:"key"`
+	Secret   string `mapstructure:"secret"`
+	Domain   string `mapstructure:"domain"`
+	RoleArn  string `mapstructure:"role_arn"`
+	Duration int64  `mapstructure:"duration"`
+	Endpoint string `mapstructure:"endpoint"`
 }
 
 type S3Config struct {
@@ -56,11 +61,14 @@ func (c StorageConfig) ToStorage() storage.Config {
 			StaticPrefix: c.Local.StaticPrefix,
 		},
 		Oss: storage.OssConfig{
-			Region: c.Oss.Region,
-			Bucket: c.Oss.Bucket,
-			Key:    c.Oss.Key,
-			Secret: c.Oss.Secret,
-			Domain: c.Oss.Domain,
+			Region:   c.Oss.Region,
+			Bucket:   c.Oss.Bucket,
+			Key:      c.Oss.Key,
+			Secret:   c.Oss.Secret,
+			Domain:   c.Oss.Domain,
+			RoleArn:  c.Oss.RoleArn,
+			Duration: c.Oss.Duration,
+			Endpoint: c.Oss.Endpoint,
 		},
 		S3: storage.S3Config{
 			Endpoint:  c.S3.Endpoint,
