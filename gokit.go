@@ -85,7 +85,7 @@ func (a *GokitApp) Init(cs ...Component) error {
 	return nil
 }
 
-func New(configPath string, cs ...Component) (*GokitApp, error) {
+func NewWithConfigFile(configPath string, cs ...Component) (*GokitApp, error) {
 	if defaultApp != nil {
 		return defaultApp, nil
 	}
@@ -96,6 +96,25 @@ func New(configPath string, cs ...Component) (*GokitApp, error) {
 	if err := app.loadConfig(configPath); err != nil {
 		return nil, err
 	}
+
+	if err := app.Init(cs...); err != nil {
+		return nil, err
+	}
+
+	defaultApp = app
+
+	return app, nil
+}
+
+func New(c *config.Config, cs ...Component) (*GokitApp, error) {
+	if defaultApp != nil {
+		return defaultApp, nil
+	}
+
+	app := &GokitApp{}
+
+	// config
+	app.Config = c
 
 	if err := app.Init(cs...); err != nil {
 		return nil, err
