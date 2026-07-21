@@ -150,6 +150,10 @@ func (l *OssStorage) Certificate(ctx context.Context, in *UploadRequest) (*Uploa
 		AccessKeySecret: tea.StringValue(resp.Body.Credentials.AccessKeySecret),
 		SecurityToken:   tea.StringValue(resp.Body.Credentials.SecurityToken),
 		ExpireAt:        expire.Unix(),
+		Driver:          l.Driver(),
+		Bucket:          l.cfg.Oss.Bucket,
+		Region:          l.cfg.Oss.Region,
+		Key:             in.Path,
 	}
 
 	return cfg, nil
