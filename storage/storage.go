@@ -34,7 +34,7 @@ type UploadRequest struct {
 	Path        string
 	Filename    string
 	ContentType string
-	sessionName string
+	SessionName string
 
 	Size   int64
 	Reader io.Reader
