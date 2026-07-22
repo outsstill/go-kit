@@ -2,6 +2,7 @@ package storage
 
 import (
 	"context"
+	"encoding/json"
 	"io"
 	"os"
 	"strings"
@@ -146,6 +147,8 @@ func (l *OssStorage) Certificate(ctx context.Context, in *UploadRequest) (*Uploa
 		tea.StringValue(resp.Body.Credentials.Expiration),
 	)
 
+	respJson, _ := json.Marshal(resp)
+
 	cfg := &UploadCredential{
 		AccessKeyID:     tea.StringValue(resp.Body.Credentials.AccessKeyId),
 		AccessKeySecret: tea.StringValue(resp.Body.Credentials.AccessKeySecret),
@@ -155,6 +158,7 @@ func (l *OssStorage) Certificate(ctx context.Context, in *UploadRequest) (*Uploa
 		Bucket:          l.cfg.Oss.Bucket,
 		Region:          l.cfg.Oss.Region,
 		Key:             in.Path,
+		Response:        string(respJson),
 	}
 
 	return cfg, nil

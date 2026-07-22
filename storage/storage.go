@@ -78,6 +78,7 @@ type UploadCredential struct {
 	AccessKeySecret string         `json:"access_key_secret,omitempty"`
 	SecurityToken   string         `json:"security_token,omitempty"`
 	Credential      map[string]any `json:"credential"`
+	Response        string         `json:"response"`
 }
 
 // 获取文件存储名称(包含完整路径)
