@@ -159,6 +159,7 @@ func (l *OssStorage) Certificate(ctx context.Context, in *UploadRequest) (*Uploa
 		Region:          l.cfg.Oss.Region,
 		Key:             in.Path,
 		Response:        string(respJson),
+		Endpoint:        l.cfg.Oss.Endpoint,
 	}
 
 	return cfg, nil
