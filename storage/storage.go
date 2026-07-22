@@ -35,8 +35,9 @@ type UploadRequest struct {
 	Filename    string
 	ContentType string
 	SessionName string
-
-	Size   int64
+	MimeType    string
+	Size        int64
+	
 	Reader io.Reader
 	// 供直传/分片扩展使用
 	Meta map[string]string
