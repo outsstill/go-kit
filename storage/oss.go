@@ -160,6 +160,7 @@ func (l *OssStorage) Certificate(ctx context.Context, in *UploadRequest) (*Uploa
 		Key:             in.Path,
 		Response:        string(respJson),
 		Endpoint:        l.cfg.Oss.Endpoint, // 前端上传地址所用
+		Path:            GetFileStoragePathPrefix(l.cfg.Prefix),
 	}
 
 	return cfg, nil

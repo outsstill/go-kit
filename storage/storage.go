@@ -37,7 +37,7 @@ type UploadRequest struct {
 	SessionName string
 	MimeType    string
 	Size        int64
-	
+
 	Reader io.Reader
 	// 供直传/分片扩展使用
 	Meta map[string]string
@@ -72,8 +72,9 @@ type UploadCredential struct {
 	Endpoint  string `json:"endpoint,omitempty"`
 	Directory string `json:"directory,omitempty"`
 
-	Key      string `json:"key"`
-	ExpireAt int64  `json:"expireAt"`
+	Path     string `json:"path,omitempty"`
+	Key      string `json:"key,omitempty"`
+	ExpireAt int64  `json:"expireAt,omitempty"`
 
 	AccessKeyID     string         `json:"access_key_id,omitempty"`
 	AccessKeySecret string         `json:"access_key_secret,omitempty"`
