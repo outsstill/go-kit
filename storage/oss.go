@@ -149,6 +149,8 @@ func (l *OssStorage) Certificate(ctx context.Context, in *UploadRequest) (*Uploa
 
 	respJson, _ := json.Marshal(resp)
 
+	key, _ := GetFileStorageRealPath(in.Filename, false, l.cfg.Prefix)
+
 	cfg := &UploadCredential{
 		AccessKeyID:     tea.StringValue(resp.Body.Credentials.AccessKeyId),
 		AccessKeySecret: tea.StringValue(resp.Body.Credentials.AccessKeySecret),
@@ -157,7 +159,7 @@ func (l *OssStorage) Certificate(ctx context.Context, in *UploadRequest) (*Uploa
 		Driver:          l.Driver(),
 		Bucket:          l.cfg.Oss.Bucket,
 		Region:          l.cfg.Oss.Region,
-		Key:             in.Path,
+		Key:             key,
 		Response:        string(respJson),
 		Endpoint:        l.cfg.Oss.Endpoint, // 前端上传地址所用
 		Path:            GetFileStoragePathPrefix(l.cfg.Prefix),
