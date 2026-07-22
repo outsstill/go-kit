@@ -20,14 +20,15 @@ type LocalConfig struct {
 }
 
 type OssConfig struct {
-	Region   string `mapstructure:"region"`
-	Bucket   string `mapstructure:"bucket"`
-	Key      string `mapstructure:"key"`
-	Secret   string `mapstructure:"secret"`
-	Domain   string `mapstructure:"domain"`
-	RoleArn  string `mapstructure:"role_arn"`
-	Duration int64  `mapstructure:"duration"`
-	Endpoint string `mapstructure:"endpoint"`
+	Region      string `mapstructure:"region"`
+	Bucket      string `mapstructure:"bucket"`
+	Key         string `mapstructure:"key"`
+	Secret      string `mapstructure:"secret"`
+	Domain      string `mapstructure:"domain"`
+	RoleArn     string `mapstructure:"role_arn"`
+	Duration    int64  `mapstructure:"duration"`
+	Endpoint    string `mapstructure:"endpoint"`
+	EndpointSts string `mapstructure:"endpoint_sts"`
 }
 
 type S3Config struct {

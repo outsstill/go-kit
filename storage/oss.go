@@ -123,7 +123,7 @@ func (l *OssStorage) Certificate(ctx context.Context, in *UploadRequest) (*Uploa
 	config := &openapi.Config{
 		AccessKeyId:     tea.String(l.cfg.Oss.Key),
 		AccessKeySecret: tea.String(l.cfg.Oss.Secret),
-		Endpoint:        tea.String(l.cfg.Oss.Endpoint),
+		Endpoint:        tea.String(l.cfg.Oss.EndpointSts),
 	}
 
 	client, err := sts.NewClient(config)
@@ -159,7 +159,7 @@ func (l *OssStorage) Certificate(ctx context.Context, in *UploadRequest) (*Uploa
 		Region:          l.cfg.Oss.Region,
 		Key:             in.Path,
 		Response:        string(respJson),
-		Endpoint:        l.cfg.Oss.Endpoint,
+		Endpoint:        l.cfg.Oss.Endpoint, // 前端上传地址所用
 	}
 
 	return cfg, nil
