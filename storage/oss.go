@@ -2,7 +2,7 @@ package storage
 
 import (
 	"context"
-	"encoding/json"
+	"fmt"
 	"io"
 	"os"
 	"strings"
@@ -147,9 +147,23 @@ func (l *OssStorage) Certificate(ctx context.Context, in *UploadRequest) (*Uploa
 		tea.StringValue(resp.Body.Credentials.Expiration),
 	)
 
-	respJson, _ := json.Marshal(resp)
+	files := in.Files
 
-	key, _ := GetFileStorageRealPath(in.Filename, false, l.cfg.Prefix)
+	if len(files) == 0 {
+		return nil, fmt.Errorf("no files found")
+	}
+
+	returnFiles := make([]UploadFileKey, len(files))
+
+	for _, file := range files {
+		key, _ := GetFileStorageRealPath(file.Filename, false, l.cfg.Prefix)
+		returnFiles = append(returnFiles, UploadFileKey{
+			FileName: file.Filename,
+			Key:      key,
+		})
+	}
+
+	//respJson, _ := json.Marshal(resp)
 
 	cfg := &UploadCredential{
 		AccessKeyID:     tea.StringValue(resp.Body.Credentials.AccessKeyId),
@@ -159,10 +173,8 @@ func (l *OssStorage) Certificate(ctx context.Context, in *UploadRequest) (*Uploa
 		Driver:          l.Driver(),
 		Bucket:          l.cfg.Oss.Bucket,
 		Region:          l.cfg.Oss.Region,
-		Key:             key,
-		Response:        string(respJson),
 		Endpoint:        l.cfg.Oss.Endpoint, // 前端上传地址所用
-		Path:            GetFileStoragePathPrefix(l.cfg.Prefix),
+		Files:           returnFiles,
 	}
 
 	return cfg, nil

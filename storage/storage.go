@@ -40,7 +40,16 @@ type UploadRequest struct {
 
 	Reader io.Reader
 	// 供直传/分片扩展使用
-	Meta map[string]string
+	Meta  map[string]string
+	Files []UploadFileReq
+}
+
+type UploadFileReq struct {
+	Filename    string `json:"filename"`
+	ContentType string `json:"content_type"`
+	MimeType    string `json:"mime_type"`
+	Size        int64  `json:"size"`
+	Reader      io.Reader
 }
 
 type FileObj struct {
@@ -71,16 +80,20 @@ type UploadCredential struct {
 	Region    string `json:"region,omitempty"`
 	Endpoint  string `json:"endpoint,omitempty"`
 	Directory string `json:"directory,omitempty"`
+	ExpireAt  int64  `json:"expireAt,omitempty"`
 
-	Path     string `json:"path,omitempty"`
-	Key      string `json:"key,omitempty"`
-	ExpireAt int64  `json:"expireAt,omitempty"`
+	AccessKeyID     string          `json:"access_key_id,omitempty"`
+	AccessKeySecret string          `json:"access_key_secret,omitempty"`
+	SecurityToken   string          `json:"security_token,omitempty"`
+	Credential      map[string]any  `json:"credential"`
+	Response        string          `json:"response"`
+	Files           []UploadFileKey `json:"files"`
+}
 
-	AccessKeyID     string         `json:"access_key_id,omitempty"`
-	AccessKeySecret string         `json:"access_key_secret,omitempty"`
-	SecurityToken   string         `json:"security_token,omitempty"`
-	Credential      map[string]any `json:"credential"`
-	Response        string         `json:"response"`
+type UploadFileKey struct {
+	FileName string `json:"filename"`
+	Key      string `json:"key"`
+	URL      string `json:"url,omitempty"`
 }
 
 // 获取文件存储名称(包含完整路径)
