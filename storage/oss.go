@@ -2,16 +2,17 @@ package storage
 
 import (
 	"context"
+	"io"
+	"os"
+	"strings"
+	"time"
+
 	openapi "github.com/alibabacloud-go/darabonba-openapi/v2/client"
 	sts "github.com/alibabacloud-go/sts-20150401/v2/client"
 	"github.com/alibabacloud-go/tea/tea"
 	"github.com/aliyun/alibabacloud-oss-go-sdk-v2/oss"
 	"github.com/aliyun/alibabacloud-oss-go-sdk-v2/oss/credentials"
 	"github.com/spf13/cast"
-	"io"
-	"os"
-	"strings"
-	"time"
 )
 
 type OssStorage struct {
@@ -131,7 +132,7 @@ func (l *OssStorage) Certificate(ctx context.Context, in *UploadRequest) (*Uploa
 
 	req := &sts.AssumeRoleRequest{
 		RoleArn:         tea.String(l.cfg.Oss.RoleArn),
-		RoleSessionName: tea.String(in.sessionName),
+		RoleSessionName: tea.String(in.SessionName),
 		DurationSeconds: tea.Int64(l.cfg.Oss.Duration),
 	}
 
