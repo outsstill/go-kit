@@ -169,7 +169,7 @@ func (l *OssStorage) Certificate(ctx context.Context, in *UploadRequest) (*Uploa
 	//respJson, _ := json.Marshal(resp)
 
 	cfg := &UploadCredential{
-		UploadType:      in.SourceType,
+		SourceType:      in.SourceType,
 		AccessKeyID:     tea.StringValue(resp.Body.Credentials.AccessKeyId),
 		AccessKeySecret: tea.StringValue(resp.Body.Credentials.AccessKeySecret),
 		SecurityToken:   tea.StringValue(resp.Body.Credentials.SecurityToken),

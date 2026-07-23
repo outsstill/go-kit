@@ -75,7 +75,7 @@ type FileObj struct {
 // 前端上传凭证
 type UploadCredential struct {
 	Driver     string `json:"driver"`
-	UploadType string `json:"uploadType"`
+	SourceType string `json:"source_type"`
 
 	Bucket    string `json:"bucket,omitempty"`
 	Region    string `json:"region,omitempty"`
