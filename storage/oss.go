@@ -162,6 +162,7 @@ func (l *OssStorage) Certificate(ctx context.Context, in *UploadRequest) (*Uploa
 				Filename: file.Filename,
 				Key:      key,
 				UUID:     file.UUID,
+				URL:      l.URL(ctx, key),
 			})
 		}
 	}
