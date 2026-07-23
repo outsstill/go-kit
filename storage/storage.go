@@ -45,6 +45,7 @@ type UploadRequest struct {
 }
 
 type UploadFileReq struct {
+	UUID        string `json:"uuid"`
 	Filename    string `json:"filename"`
 	ContentType string `json:"content_type"`
 	MimeType    string `json:"mime_type"`
@@ -91,7 +92,8 @@ type UploadCredential struct {
 }
 
 type UploadFileKey struct {
-	FileName string `json:"filename"`
+	UUID     string `json:"uuid"`
+	Filename string `json:"filename"`
 	Key      string `json:"key"`
 	URL      string `json:"url,omitempty"`
 }

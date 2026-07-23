@@ -158,8 +158,9 @@ func (l *OssStorage) Certificate(ctx context.Context, in *UploadRequest) (*Uploa
 	for _, file := range files {
 		key, _ := GetFileStorageRealPath(file.Filename, false, l.cfg.Prefix)
 		returnFiles = append(returnFiles, UploadFileKey{
-			FileName: file.Filename,
+			Filename: file.Filename,
 			Key:      key,
+			UUID:     file.UUID,
 		})
 	}
 
