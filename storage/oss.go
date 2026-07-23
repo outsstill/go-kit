@@ -153,7 +153,7 @@ func (l *OssStorage) Certificate(ctx context.Context, in *UploadRequest) (*Uploa
 		return nil, fmt.Errorf("no files found")
 	}
 
-	returnFiles := make([]UploadFileKey, len(files))
+	returnFiles := make([]UploadFileKey, 0, len(files))
 
 	for _, file := range files {
 		if file.Filename != "" && file.UUID != "" {
