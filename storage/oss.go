@@ -156,17 +156,20 @@ func (l *OssStorage) Certificate(ctx context.Context, in *UploadRequest) (*Uploa
 	returnFiles := make([]UploadFileKey, len(files))
 
 	for _, file := range files {
-		key, _ := GetFileStorageRealPath(file.Filename, false, l.cfg.Prefix)
-		returnFiles = append(returnFiles, UploadFileKey{
-			Filename: file.Filename,
-			Key:      key,
-			UUID:     file.UUID,
-		})
+		if file.Filename != "" && file.UUID != "" {
+			key, _ := GetFileStorageRealPath(file.Filename, false, l.cfg.Prefix)
+			returnFiles = append(returnFiles, UploadFileKey{
+				Filename: file.Filename,
+				Key:      key,
+				UUID:     file.UUID,
+			})
+		}
 	}
 
 	//respJson, _ := json.Marshal(resp)
 
 	cfg := &UploadCredential{
+		UploadType:      in.SourceType,
 		AccessKeyID:     tea.StringValue(resp.Body.Credentials.AccessKeyId),
 		AccessKeySecret: tea.StringValue(resp.Body.Credentials.AccessKeySecret),
 		SecurityToken:   tea.StringValue(resp.Body.Credentials.SecurityToken),
