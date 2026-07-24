@@ -55,8 +55,8 @@ func (l *LocalStorage) Put(ctx context.Context, in *UploadRequest) (*FileObj, er
 	f.Size = size
 	f.ID = uuid.NewString()
 	f.ContentType = in.ContentType
-	f.Path = fullPath
-	f.Key = strings.Trim(realPath, "/")
+	f.Path = strings.Trim(realPath, "/")
+	f.Key = fullPath
 	f.Ext = GetFileExt(in.Filename)
 	f.OriginName = in.Filename
 	f.StoredName = nowFileName
