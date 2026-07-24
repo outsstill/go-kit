@@ -12,6 +12,14 @@ import (
 	"github.com/spf13/cast"
 )
 
+type UploadType uint
+
+const (
+	UPLOAD_TYPE_CROSS_SERVER UploadType = iota + 1
+	UPLOAD_TYPE_CERT
+	UPLOAD_TYPE_DIRECT
+)
+
 type IStorage interface {
 	// 上传
 	Put(ctx context.Context, req *UploadRequest) (*FileObj, error)
