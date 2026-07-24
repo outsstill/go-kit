@@ -67,6 +67,7 @@ func (l *OssStorage) Put(ctx context.Context, in *UploadRequest) (*FileObj, erro
 		Ext:          GetFileExt(fileName),
 		Driver:       l.Driver(),
 		Size:         fileSize,
+		MimeType:     in.MimeType,
 		ContentType:  in.ContentType,
 		ETag:         oss.ToString(res.ETag), // 可计算 md5
 		LastModified: time.Now(),

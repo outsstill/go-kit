@@ -61,6 +61,7 @@ type FileObj struct {
 	OriginName   string            `json:"origin_name"` // 原文件名 例: 123.jpg
 	StoredName   string            `json:"stored_name"` // 储存文件名 例: xxxxxx.jpg
 	Size         int64             `json:"size"`
+	MimeType     string            `json:"mime_type"`
 	ContentType  string            `json:"content_type"`
 	Ext          string            `json:"ext"` // 不含 . 例: jpg
 	Hash         string            `json:"hash"`
