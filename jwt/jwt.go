@@ -3,9 +3,10 @@ package jwt
 import (
 	"errors"
 	"fmt"
-	"github.com/outsstill/go-kit/logger"
 	"strings"
 	"time"
+
+	"github.com/outsstill/go-kit/logger"
 
 	"github.com/gin-gonic/gin"
 	jwtpkg "github.com/golang-jwt/jwt/v5"
@@ -27,6 +28,8 @@ const (
 	ADMIN_TOKEN_TYPE
 	MERCHANT_TOKEN_TYPE
 	AGENT_TOKEN_TYPE
+	MERCHANT_ADMIN_TOKEN_TYPE
+	MERCHANT_USER_TOKEN_TYPE
 )
 
 // JWT 定义一个jwt对象
