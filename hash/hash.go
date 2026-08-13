@@ -67,6 +67,6 @@ func RequireToken(n int) string {
 
 // BcryptIsHashed 判断字符串是否是哈希过的数据
 func BcryptIsHashed(str string) bool {
-	// bcrypt 加密后的长度等于 60
-	return len(str) == 60
+	// Password 加密后的长度等于 94
+	return len(str) == 94
 }
